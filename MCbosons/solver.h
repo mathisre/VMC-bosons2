@@ -9,14 +9,13 @@ public:
 
 
 
-    void Metropolis(double rng, double w);
+    void Metropolis(double rng, double w, double &Psi_Old);
     double Psi_local();
     double E_local();
+    double WaveFunction(vector<double> R, double alpha);
 
 
 
-    int getNumerOfAtoms() const;
-    void setNumerOfAtoms(int value);
 
     int getDimensions() const;
     void setDimensions(int value);
@@ -27,11 +26,15 @@ public:
     double getStepSize() const;
     void setStepSize(double value);
 
+    int getNumerOfParticles() const;
+    void setNumerOfParticles(int NumerOfParticles);
+
 private:
-    int m_NumerOfAtoms;
+    int m_NumerOfParticles;
     int m_Dimensions;
     int m_NumberOfSteps;
     double m_StepSize;
+    double m_a;
 };
 
 
