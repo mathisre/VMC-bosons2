@@ -7,12 +7,16 @@
 #include "../particle.h"
 using std::vector;
 
-SimpleGaussian::SimpleGaussian(System* system, double alpha) :
+SimpleGaussian::SimpleGaussian(System* system, double alpha, double beta) :
         WaveFunction(system) {
     assert(alpha >= 0);
-    m_numberOfParameters = 1;
-    m_parameters.reserve(1);
+    m_numberOfParameters = 3;
+    m_parameters.reserve(3);
     m_parameters.push_back(alpha);
+    m_parameters.push_back(alpha);
+    m_parameters.push_back(alpha*beta);
+
+
 }
 
 double SimpleGaussian::evaluate(std::vector<class Particle*> particles) {
@@ -52,7 +56,7 @@ double SimpleGaussian::evaluate(std::vector<class Particle*> particles) {
 //            u+=log(f);
 //        }
 //    }
-    return exp(-m_parameters[1]*r_squared+u);
+    return exp(-m_parameters[0]*r_squared+u);
 }
 
 double SimpleGaussian::computeDoubleDerivative(std::vector<class Particle*> particles) {
@@ -65,23 +69,39 @@ double SimpleGaussian::computeDoubleDerivative(std::vector<class Particle*> part
      * Schrödinger equation to see how the two are related).
      */
 
+    /* The second derivative is composed of four terms, so we use
+     * names first, second, third, fourth.
+     */
+
     double first,second,third, fourth=0;
     double a=0;
     double temp=0;
     double temp2=0;
     double temp3=0;
+    double temp4= 0;
     for(int k=0; k<m_system->getNumberOfParticles();k++){
-        first=m_parameters[1]*m_parameters[1]*(4*particles.at(k)->getPosition()[1]*particles.at(k)->getPosition()[1]+4*particles.at(k)->getPosition()[2]*particles.at(k)->getPosition()[2]+
-                4*m_parameters[2]*particles.at(k)->getPosition()[3]*particles.at(k)->getPosition()[3])-m_parameters[1]*(4+2*m_parameters[2]);
+        for (int d = 0; d < m_system->getNumberOfDimensions(); d++){
+            first += (4*particles.at(k)->getPosition()[d]*particles.at(k)->getPosition()[d]*m_parameters[d]*m_parameters[d]);
+        }
+        first -= 4*m_parameters[0] + 2*m_parameters[2];
+
         for(int j=0; j<m_system->getNumberOfParticles(); j++){
-            if(j!=k) temp+=a/(m_system->computedistanceABS(k,j)*(m_system->computedistanceABS(k,j)-a)), temp2+=-temp*temp;
-            for(int i=0; i<m_system->getNumberOfParticles(); i++){
-            if(j!=k&&i!=k) temp3+=a*a/(m_system->computedistanceABS(k,j)*m_system->computedistanceABS(k,i)*(m_system->computedistanceABS(k,j)-a)*(m_system->computedistanceABS(k,i)-a));
+            for (int d = 0; d < m_system->getNumberOfDimensions(); d++){
+                if (j != k){
+                    temp4 = a/(m_system->computedistanceABS(k,j)*(m_system->computedistanceABS(k,j)-a));
+                    temp -= 4*m_parameters[d]*(particles.at(j)->getPosition()[d] - particles.at(k)->getPosition()[d]) * temp4;
+                    temp2 -= temp4*temp4;
+                }
+                for(int i=0; i<m_system->getNumberOfParticles(); i++){
+                    if(j!=k && i!=k) temp3+=a*a/(m_system->computedistanceABS(k,j)*m_system->computedistanceABS(k,i)*
+                                                 (m_system->computedistanceABS(k,j)-a)*(m_system->computedistanceABS(k,i)-a));
+                }
             }
         }
-        second=temp;
-        fourth=temp2;
-        third=temp3;
     }
+    second=temp;
+    third=temp3;
+    fourth=temp2;
+
     return first+second+third+fourth;
 }

@@ -18,21 +18,21 @@ bool System::metropolisStep() {
      * accepted by the Metropolis test (compare the wave function evaluated
      * at this new position with the one at the old position).
      */
-int randparticle=m_random->nextInt(m_numberOfParticles);
-cout<<randparticle<<endl;
+    int randparticle=m_random->nextInt(m_numberOfParticles);
+    cout<<randparticle<<endl;
 
-vector <double> r_old=m_particles.at(randparticle)->getPosition();
-double psi_old=m_waveFunction->evaluate(getParticles());
-vector <double> r_new(m_numberOfDimensions);
-for(int j=0;j<m_numberOfDimensions;j++){
-    r_new[j]=r_old[j]+m_stepLength*(m_random->nextDouble()-0.5);
-}
-m_particles.at(randparticle)->setPosition(r_new);
-double psi_new=m_waveFunction->evaluate(getParticles());
+    vector <double> r_old=m_particles.at(randparticle)->getPosition();
+    double psi_old=m_waveFunction->evaluate(getParticles());
+    vector <double> r_new(m_numberOfDimensions);
+    for(int j=0;j<m_numberOfDimensions;j++){
+        r_new[j]=r_old[j]+m_stepLength*(m_random->nextDouble()-0.5);
+    }
+    m_particles.at(randparticle)->setPosition(r_new);
+    double psi_new=m_waveFunction->evaluate(getParticles());
 
-double random_number=m_random->nextDouble();
-if(random_number<=psi_new*psi_new/(psi_old*psi_old)) return true;
-else m_particles.at(randparticle)->setPosition(r_old); return false;
+    double random_number=m_random->nextDouble();
+    if(random_number<=psi_new*psi_new/(psi_old*psi_old)) return true;
+    else m_particles.at(randparticle)->setPosition(r_old); return false;
 }
 
 void System::runMetropolisSteps(int numberOfMetropolisSteps) {
@@ -67,7 +67,7 @@ double System::computedistance(int i){
 double System::computedistanceABS(int i, int j){
     double temp=0;
     for(int k=0;k<m_numberOfDimensions;k++){
-    temp+=(m_particles.at(i)->getPosition()[k]-m_particles.at(j)->getPosition()[k])*(m_particles.at(i)->getPosition()[k]-m_particles.at(j)->getPosition()[k]);
+        temp+=(m_particles.at(i)->getPosition()[k]-m_particles.at(j)->getPosition()[k])*(m_particles.at(i)->getPosition()[k]-m_particles.at(j)->getPosition()[k]);
     }
     return sqrt(temp);
 }
