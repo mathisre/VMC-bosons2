@@ -23,17 +23,21 @@ public:
     int getNumberOfMetropolisSteps()    { return m_numberOfMetropolisSteps; }
     double getEquilibrationFraction()   { return m_equilibrationFraction; }
 
+    double getTrapSize() const;
+    void setTrapSize(double trapSize);
+
 private:
     int                             m_numberOfParticles = 0;
     int                             m_numberOfDimensions = 0;
     int                             m_numberOfMetropolisSteps = 0;
     double                          m_equilibrationFraction = 0.0;
     double                          m_stepLength = 0.1;
+    double                          m_trapSize = 0;
     class WaveFunction*             m_waveFunction = nullptr;
     class Hamiltonian*              m_hamiltonian = nullptr;
     class InitialState*             m_initialState = nullptr;
     class Sampler*                  m_sampler = nullptr;
-    class Random*                  m_random = nullptr;
+    class Random*                   m_random = nullptr;
     std::vector<class Particle*>    m_particles = std::vector<class Particle*>();
 };
 

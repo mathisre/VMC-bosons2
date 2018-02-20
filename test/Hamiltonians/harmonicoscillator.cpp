@@ -8,10 +8,15 @@
 using std::cout;
 using std::endl;
 
-HarmonicOscillator::HarmonicOscillator(System* system, double omega) :
+HarmonicOscillator::HarmonicOscillator(System* system, double omega, double omega_z) :
         Hamiltonian(system) {
     assert(omega > 0);
-    m_omega  = omega;
+    assert(omega_z > 0);
+    m_omega.reserve(3);
+    m_omega.push_back(omega);
+    m_omega.push_back(omega);
+    m_omega.push_back(omega_z);
+
 }
 
 double HarmonicOscillator::computeLocalEnergy(std::vector<Particle*> particles) {
@@ -27,6 +32,22 @@ double HarmonicOscillator::computeLocalEnergy(std::vector<Particle*> particles) 
 
     double potentialEnergy = 0;
     double kineticEnergy   = 0;
+
+
+    kineticEnergy = -0.5*m_system->getWaveFunction()->computeDoubleDerivative(particles);
+    for (int k = 0; k < m_system->getNumberOfParticles(); k++ ){
+        for (int d = 0; d < m_system->getNumberOfDimensions(); d++){
+            potentialEnergy += m_omega[d]*m_omega[d]*particles.at(k)->getPosition()[d]*particles.at(k)->getPosition()[d];
+        }
+        potentialEnergy *= 0.5;
+
+        for (int j = 0; j < m_system->getNumberOfParticles();j++){
+            potentialEnergy += (int)(1e10) * (m_system->computedistanceABS(k,j) > m_system->getTrapSize());
+        }
+
+    }
+    potentialEnergy /= m_system->getWaveFunction()->evaluate(particles);
+
     return kineticEnergy + potentialEnergy;
 }
 
