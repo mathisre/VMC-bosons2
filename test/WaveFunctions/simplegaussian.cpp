@@ -10,6 +10,7 @@ using std::vector;
 SimpleGaussian::SimpleGaussian(System* system, double alpha, double beta) :
         WaveFunction(system) {
     assert(alpha >= 0);
+    assert(beta >= 0);
     m_numberOfParameters = 3;
     m_parameters.reserve(3);
     m_parameters.push_back(alpha);
@@ -29,8 +30,8 @@ double SimpleGaussian::evaluate(std::vector<class Particle*> particles) {
     double temp2=0;
     double u=0;
     double f=0;
-    double a=0;
     int k=0;
+
     for(int i=0;i<m_system->getNumberOfParticles();i++){
         for(int j=0;j<m_system->getNumberOfDimensions();j++){
             temp+=particles.at(i)->getPosition()[j]*particles.at(i)->getPosition()[j];
@@ -40,8 +41,8 @@ double SimpleGaussian::evaluate(std::vector<class Particle*> particles) {
             }
         }
         double r_abs=sqrt(temp);
-        if(r_abs<=a) f=0;
-        else f=1-a/(r_abs);
+        if(r_abs <= m_system->getTrapSize()) f=0;
+        else f=1-m_system->getTrapSize()/(r_abs);
         u+=log(f);
     }
 

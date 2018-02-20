@@ -72,6 +72,16 @@ double System::computedistanceABS(int i, int j){
     return sqrt(temp);
 }
 
+double System::getTrapSize() const
+{
+    return m_trapSize;
+}
+
+void System::setTrapSize(double trapSize)
+{
+    m_trapSize = trapSize;
+}
+
 
 void System::setNumberOfParticles(int numberOfParticles) {
     m_numberOfParticles = numberOfParticles;

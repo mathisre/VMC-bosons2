@@ -8,9 +8,7 @@
 using std::cout;
 using std::endl;
 
-RandomUniform::RandomUniform(System*    system,
-                             int        numberOfDimensions,
-                             int        numberOfParticles)  :
+RandomUniform::RandomUniform(System* system, int numberOfDimensions, int numberOfParticles, double trapSize)  :
         InitialState(system) {
     assert(numberOfDimensions > 0 && numberOfParticles > 0);
     m_numberOfDimensions = numberOfDimensions;
@@ -23,6 +21,7 @@ RandomUniform::RandomUniform(System*    system,
      */
     m_system->setNumberOfDimensions(numberOfDimensions);
     m_system->setNumberOfParticles(numberOfParticles);
+    m_system->setTrapSize(trapSize);
     setupInitialState();
 }
 
