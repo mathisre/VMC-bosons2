@@ -15,8 +15,6 @@ SimpleGaussian::SimpleGaussian(System* system, double alpha, double beta) :
     m_parameters.push_back(alpha);
     m_parameters.push_back(alpha);
     m_parameters.push_back(alpha*beta);
-
-
 }
 
 double SimpleGaussian::evaluate(std::vector<class Particle*> particles) {
