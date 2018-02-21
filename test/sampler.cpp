@@ -29,10 +29,13 @@ void Sampler::sample(bool acceptedStep) {
     /* Here you should sample all the interesting things you want to measure.
      * Note that there are (way) more than the single one here currently.
      */
+    if (acceptedStep==true){
     double localEnergy = m_system->getHamiltonian()->
                          computeLocalEnergy(m_system->getParticles());
     m_cumulativeEnergy  += localEnergy;
+    cout<<m_cumulativeEnergy<<endl;
     m_stepNumber++;
+    }
 }
 
 void Sampler::printOutputToTerminal() {
@@ -56,7 +59,7 @@ void Sampler::printOutputToTerminal() {
         cout << " Parameter " << i+1 << " : " << pa.at(i) << endl;
     }
     cout << endl;
-    cout << "  -- Reults -- " << endl;
+    cout << "  -- Results -- " << endl;
     cout << " Energy : " << m_energy << endl;
     cout << endl;
 }

@@ -5,6 +5,9 @@
 #include "wavefunction.h"
 #include "../system.h"
 #include "../particle.h"
+#include <iostream>
+
+using namespace std;
 using std::vector;
 
 SimpleGaussian::SimpleGaussian(System* system, double alpha, double beta) :
@@ -55,6 +58,7 @@ double SimpleGaussian::evaluate(std::vector<class Particle*> particles) {
 //            u+=log(f);
 //        }
 //    }
+
     return exp(-m_parameters[0]*r_squared+u);
 }
 
@@ -78,11 +82,14 @@ double SimpleGaussian::computeDoubleDerivative(std::vector<class Particle*> part
     double temp2=0;
     double temp3=0;
     double temp4= 0;
+    vector <double> beta_vector={1,1,m_parameters[2]}; //write in a more fancy way
+
     for(int k=0; k<m_system->getNumberOfParticles();k++){
         for (int d = 0; d < m_system->getNumberOfDimensions(); d++){
-            first += (4*particles.at(k)->getPosition()[d]*particles.at(k)->getPosition()[d]*m_parameters[d]*m_parameters[d]);
+            first += (4*particles.at(k)->getPosition()[d]*particles.at(k)->getPosition()[d]*m_parameters[d]*m_parameters[d])
+                    -m_parameters[0]*(2*beta_vector[d]);
         }
-        first -= 4*m_parameters[0] + 2*m_parameters[2];
+        //first -= 2*(m_system->getNumberOfDimensions())*m_parameters[0];// 2*m_parameters[2];
 
         for(int j=0; j<m_system->getNumberOfParticles(); j++){
             for (int d = 0; d < m_system->getNumberOfDimensions(); d++){

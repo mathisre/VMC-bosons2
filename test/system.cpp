@@ -19,7 +19,7 @@ bool System::metropolisStep() {
      * at this new position with the one at the old position).
      */
     int randparticle=m_random->nextInt(m_numberOfParticles);
-    cout<<randparticle<<endl;
+    //cout<<randparticle<<endl;
 
     vector <double> r_old=m_particles.at(randparticle)->getPosition();
     double psi_old=m_waveFunction->evaluate(getParticles());
@@ -50,7 +50,8 @@ void System::runMetropolisSteps(int numberOfMetropolisSteps) {
          * for a while. You may handle this using the fraction of steps which
          * are equilibration steps; m_equilibrationFraction.
          */
-        if(m_sampler->getStepNumber()/m_sampler->getNumberOfMetropolisSteps()>1-m_equilibrationFraction) m_sampler->sample(acceptedStep);
+        //if(m_sampler->getStepNumber()/m_sampler->getNumberOfMetropolisSteps()>1-m_equilibrationFraction)
+            m_sampler->sample(acceptedStep);
     }
     m_sampler->computeAverages();
     m_sampler->printOutputToTerminal();

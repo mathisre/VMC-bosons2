@@ -1,10 +1,14 @@
 #include "particle.h"
 #include <cassert>
+#include <iostream>
+
+using namespace std;
 
 Particle::Particle() {
 }
 
 void Particle::setPosition(const std::vector<double> &position) {
+
     assert(position.size() == m_numberOfDimensions);
     m_position = position;
 }

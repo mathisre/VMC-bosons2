@@ -34,7 +34,11 @@ double HarmonicOscillator::computeLocalEnergy(std::vector<Particle*> particles) 
     double kineticEnergy   = 0;
 
 
-    kineticEnergy = -0.5*m_system->getWaveFunction()->computeDoubleDerivative(particles);
+    //kineticEnergy = -0.5*m_system->getWaveFunction()->computeDoubleDerivative(particles);
+    kineticEnergy=-0.5*m_system->getHamiltonian()->computeNumericalDoubleDerivative(particles);
+
+    cout<<"kinetic"<<kineticEnergy<<endl;
+
     for (int k = 0; k < m_system->getNumberOfParticles(); k++ ){
         for (int d = 0; d < m_system->getNumberOfDimensions(); d++){
             potentialEnergy += m_omega[d]*m_omega[d]*particles.at(k)->getPosition()[d]*particles.at(k)->getPosition()[d];
@@ -47,6 +51,8 @@ double HarmonicOscillator::computeLocalEnergy(std::vector<Particle*> particles) 
 
     }
     potentialEnergy /= m_system->getWaveFunction()->evaluate(particles);
+
+    cout<<"pot"<<potentialEnergy;
 
     return kineticEnergy + potentialEnergy;
 }
