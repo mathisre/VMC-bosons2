@@ -9,6 +9,7 @@
 #include "InitialStates/initialstate.h"
 #include "Math/random.h"
 #include <iostream>
+#include <ctime>
 
 using namespace std;
 
@@ -21,9 +22,10 @@ bool System::metropolisStep() {
     int randparticle=m_random->nextInt(m_numberOfParticles);
     //cout<<randparticle<<endl;
 
-    vector <double> r_old=m_particles.at(randparticle)->getPosition();
-    double psi_old=m_waveFunction->evaluate(getParticles());
+    vector <double> r_old = m_particles.at(randparticle)->getPosition();
+    double psi_old = m_waveFunction->evaluate(getParticles());
     vector <double> r_new(m_numberOfDimensions);
+
     for(int j=0;j<m_numberOfDimensions;j++){
         r_new[j]=r_old[j]+m_stepLength*(m_random->nextDouble()-0.5);
     }
@@ -41,8 +43,13 @@ void System::runMetropolisSteps(int numberOfMetropolisSteps) {
     m_numberOfMetropolisSteps   = numberOfMetropolisSteps;
     m_sampler->setNumberOfMetropolisSteps(numberOfMetropolisSteps);
 
+    time_t timeStart, timeEnd;
+
+    timeStart = clock();
+
     for (int i=0; i < numberOfMetropolisSteps; i++) {
         bool acceptedStep = metropolisStep();
+        //cout << i << endl;
 
         /* Here you should sample the energy (and maybe other things using
          * the m_sampler instance of the Sampler class. Make sure, though,
@@ -53,8 +60,11 @@ void System::runMetropolisSteps(int numberOfMetropolisSteps) {
         //if(m_sampler->getStepNumber()/m_sampler->getNumberOfMetropolisSteps()>1-m_equilibrationFraction)
             m_sampler->sample(acceptedStep);
     }
+    timeEnd = clock();
+    double timeComputation = difftime(timeEnd, timeStart);
     m_sampler->computeAverages();
     m_sampler->printOutputToTerminal();
+    cout << " Computation time = " << timeComputation << "ms" << endl << endl;
 }
 
 double System::computedistance(int i){

@@ -34,10 +34,12 @@ double HarmonicOscillator::computeLocalEnergy(std::vector<Particle*> particles) 
     double kineticEnergy   = 0;
 
 
-    //kineticEnergy = -0.5*m_system->getWaveFunction()->computeDoubleDerivative(particles);
-    kineticEnergy=-0.5*m_system->getHamiltonian()->computeNumericalDoubleDerivative(particles);
 
-    cout<<"kinetic"<<kineticEnergy<<endl;
+
+    kineticEnergy = -0.5*m_system->getWaveFunction()->computeDoubleDerivative(particles);
+    //kineticEnergy=-0.5*m_system->getHamiltonian()->computeNumericalDoubleDerivative(particles);
+
+
 
     for (int k = 0; k < m_system->getNumberOfParticles(); k++ ){
         for (int d = 0; d < m_system->getNumberOfDimensions(); d++){
@@ -45,14 +47,14 @@ double HarmonicOscillator::computeLocalEnergy(std::vector<Particle*> particles) 
         }
         potentialEnergy *= 0.5;
 
-        for (int j = 0; j < m_system->getNumberOfParticles();j++){
-            potentialEnergy += (int)(1e10) * (m_system->computedistanceABS(k,j) > m_system->getTrapSize());
+        for (int j = 0; j < m_system->getNumberOfParticles();j++){ // Interaction term
+            //potentialEnergy += (int)(1e50) * (m_system->computedistanceABS(k,j) <= m_system->getTrapSize());
         }
 
     }
     potentialEnergy /= m_system->getWaveFunction()->evaluate(particles);
-
-    cout<<"pot"<<potentialEnergy;
+    //cout<<"Kinetic energy = "<<kineticEnergy<<endl;
+    //cout<<"Potential energy = "<<potentialEnergy << endl;
 
     return kineticEnergy + potentialEnergy;
 }
