@@ -90,7 +90,6 @@ double SimpleGaussian::computeDoubleDerivative(std::vector<class Particle>& part
             first += (4*particles.at(k).getPosition()[d]*particles.at(k).getPosition()[d]*m_parameters[d]*m_parameters[d])
                     -m_parameters[0]*(2*beta_vector[d]);
         }
-        //first -= 2*(m_system->getNumberOfDimensions())*m_parameters[0];// 2*m_parameters[2];
 
         for(int j=0; j<m_system->getNumberOfParticles(); j++){
             for (int d = 0; d < m_system->getNumberOfDimensions(); d++){

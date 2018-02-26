@@ -1,7 +1,7 @@
 #include "hamiltonian.h"
 #include "../WaveFunctions/simplegaussian.h"
 #include "../system.h"
-#include "particle.h"
+#include "../particle.h"
 #include "vector"
 #include <iostream>
 
@@ -11,7 +11,12 @@ Hamiltonian::Hamiltonian(System* system) {
     m_system = system;
 }
 
+<<<<<<< HEAD
 double Hamiltonian::computeNumericalDoubleDerivative (std::vector<Particle> &particles){
+=======
+
+double Hamiltonian::computeNumericalDoubleDerivative (std::vector<class Particle*> particles){
+>>>>>>> 0f9d2e4f2ae1ceead194dde21c5b4e2377e5cdc8
 
     double h=0.00000001;
     double h_squared=h*h;
