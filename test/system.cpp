@@ -18,21 +18,21 @@ bool System::metropolisStep() {
      * accepted by the Metropolis test (compare the wave function evaluated
      * at this new position with the one at the old position).
      */
-    int randparticle=m_random->nextInt(m_numberOfParticles);
+    int randparticle=Random::nextInt(m_numberOfParticles);
     //cout<<randparticle<<endl;
 
-    vector <double> r_old=m_particles.at(randparticle)->getPosition();
-    double psi_old=m_waveFunction->evaluate(getParticles());
+    vector <double> r_old=m_particles.at(randparticle).getPosition();
+    double psi_old=m_waveFunction->evaluate(m_particles);
     vector <double> r_new(m_numberOfDimensions);
     for(int j=0;j<m_numberOfDimensions;j++){
-        r_new[j]=r_old[j]+m_stepLength*(m_random->nextDouble()-0.5);
+        r_new[j]=r_old[j]+m_stepLength*(Random::nextDouble()-0.5);
     }
-    m_particles.at(randparticle)->setPosition(r_new);
-    double psi_new=m_waveFunction->evaluate(getParticles());
+    m_particles.at(randparticle).setPosition(r_new);
+    double psi_new=m_waveFunction->evaluate(m_particles);
 
-    double random_number=m_random->nextDouble();
+    double random_number=Random::nextDouble();
     if(random_number<=psi_new*psi_new/(psi_old*psi_old)) return true;
-    else m_particles.at(randparticle)->setPosition(r_old); return false;
+    else m_particles.at(randparticle).setPosition(r_old); return false;
 }
 
 void System::runMetropolisSteps(int numberOfMetropolisSteps) {
@@ -52,6 +52,7 @@ void System::runMetropolisSteps(int numberOfMetropolisSteps) {
          */
         //if(m_sampler->getStepNumber()/m_sampler->getNumberOfMetropolisSteps()>1-m_equilibrationFraction)
             m_sampler->sample(acceptedStep);
+            //cout << i+1 << endl;
     }
     m_sampler->computeAverages();
     m_sampler->printOutputToTerminal();
@@ -60,7 +61,7 @@ void System::runMetropolisSteps(int numberOfMetropolisSteps) {
 double System::computedistance(int i){
     double temp=0;
     for(int j=0;j<m_numberOfDimensions;j++){
-    temp+=m_particles.at(i)->getPosition()[j]*m_particles.at(i)->getPosition()[j];
+    temp+=m_particles.at(i).getPosition()[j]*m_particles.at(i).getPosition()[j];
     }
     return sqrt(temp);
 }
@@ -68,7 +69,7 @@ double System::computedistance(int i){
 double System::computedistanceABS(int i, int j){
     double temp=0;
     for(int k=0;k<m_numberOfDimensions;k++){
-        temp+=(m_particles.at(i)->getPosition()[k]-m_particles.at(j)->getPosition()[k])*(m_particles.at(i)->getPosition()[k]-m_particles.at(j)->getPosition()[k]);
+        temp+=(m_particles.at(i).getPosition()[k]-m_particles.at(j).getPosition()[k])*(m_particles.at(i).getPosition()[k]-m_particles.at(j).getPosition()[k]);
     }
     return sqrt(temp);
 }

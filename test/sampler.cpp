@@ -30,12 +30,12 @@ void Sampler::sample(bool acceptedStep) {
      * Note that there are (way) more than the single one here currently.
      */
     if (acceptedStep==true){
-    double localEnergy = m_system->getHamiltonian()->
-                         computeLocalEnergy(m_system->getParticles());
-    m_cumulativeEnergy  += localEnergy;
-    cout<<m_cumulativeEnergy<<endl;
-    m_stepNumber++;
+        m_energy = m_system->getHamiltonian()->
+                   computeLocalEnergy(m_system->getParticles());
     }
+    m_cumulativeEnergy  += m_energy;
+    //cout<<m_cumulativeEnergy<<endl;
+    m_stepNumber++;
 }
 
 void Sampler::printOutputToTerminal() {
