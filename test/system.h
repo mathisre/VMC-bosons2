@@ -17,7 +17,7 @@ public:
     class WaveFunction*             getWaveFunction()   { return m_waveFunction; }
     class Hamiltonian*              getHamiltonian()    { return m_hamiltonian; }
     class Sampler*                  getSampler()        { return m_sampler; }
-    std::vector<class Particle*>    getParticles()      { return m_particles; }
+    std::vector<class Particle>&     getParticles()      { return m_particles; }
     int getNumberOfParticles()          { return m_numberOfParticles; }
     int getNumberOfDimensions()         { return m_numberOfDimensions; }
     int getNumberOfMetropolisSteps()    { return m_numberOfMetropolisSteps; }
@@ -37,7 +37,7 @@ private:
     class Hamiltonian*              m_hamiltonian = nullptr;
     class InitialState*             m_initialState = nullptr;
     class Sampler*                  m_sampler = nullptr;
-    class Random*                   m_random = nullptr;
-    std::vector<class Particle*>    m_particles = std::vector<class Particle*>();
+    //class Random*                   m_random = nullptr;
+    std::vector<class Particle>    m_particles = std::vector<class Particle>();
 };
 

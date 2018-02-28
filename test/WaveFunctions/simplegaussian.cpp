@@ -21,7 +21,7 @@ SimpleGaussian::SimpleGaussian(System* system, double alpha, double beta) :
     m_parameters.push_back(alpha*beta);
 }
 
-double SimpleGaussian::evaluate(std::vector<class Particle*> particles) {
+double SimpleGaussian::evaluate(std::vector<class Particle> &particles) {
     /* You need to implement a Gaussian wave function here. The positions of
      * the particles are accessible through the particle[i].getPosition()
      * function.
@@ -33,13 +33,16 @@ double SimpleGaussian::evaluate(std::vector<class Particle*> particles) {
     double temp2=0;
     double u=0;
     double f=0;
-    int k=0;
+
 
     for(int i=0;i<m_system->getNumberOfParticles();i++){
+
         for(int j=0;j<m_system->getNumberOfDimensions();j++){
-            temp+=particles.at(i)->getPosition()[j]*particles.at(i)->getPosition()[j];
-            while (i<k&&k<m_system->getNumberOfParticles()){
-                temp2+=(particles.at(i)->getPosition()[j]-particles.at(k)->getPosition()[j])*(particles.at(i)->getPosition()[j]-particles.at(k)->getPosition()[j]);
+            temp+=particles.at(i).getPosition()[j]*particles.at(i).getPosition()[j];
+               int k=0;
+            while (i < k && k < m_system->getNumberOfParticles()){
+                temp2 += (particles.at(i).getPosition()[j] - particles.at(k).getPosition()[j])
+                       * (particles.at(i).getPosition()[j] - particles.at(k).getPosition()[j]);
                 k++;
             }
         }
@@ -58,11 +61,10 @@ double SimpleGaussian::evaluate(std::vector<class Particle*> particles) {
 //            u+=log(f);
 //        }
 //    }
-
     return exp(-m_parameters[0]*r_squared+u);
 }
 
-double SimpleGaussian::computeDoubleDerivative(std::vector<class Particle*> particles) {
+double SimpleGaussian::computeDoubleDerivative(std::vector<class Particle>& particles) {
     /* All wave functions need to implement this function, so you need to
      * find the double derivative analytically. Note that by double derivative,
      * we actually mean the sum of the Laplacians with respect to the
@@ -72,8 +74,16 @@ double SimpleGaussian::computeDoubleDerivative(std::vector<class Particle*> part
      * Schrödinger equation to see how the two are related).
      */
 
-    /* The second derivative is composed of four terms, so we use
-     * names first, second, third, fourth.
+    /* Thoughts:
+     * computeddistanceABS is for all dimensions yet we use the distance between
+     * each particle in each dimension.
+     *
+     * Precalculate matrix R(k,i) that has all distances between particles?
+     * Some way to prevent calculating both R_ki and R_ik
+     *
+     * If r_ij <= a then u' and u'' need to be set to zero.
+     * Only the phi is dependent on the number of dimensions. The u's are just dependent on the distance between
+     *
      */
 
     double first,second,third, fourth=0;
@@ -82,26 +92,66 @@ double SimpleGaussian::computeDoubleDerivative(std::vector<class Particle*> part
     double temp2=0;
     double temp3=0;
     double temp4= 0;
+    double temp5 = 0;
+    double temp6 = 0;
+    double R_kj = 0;
+    double R_ki = 0;
     vector <double> beta_vector={1,1,m_parameters[2]}; //write in a more fancy way
 
     for(int k=0; k<m_system->getNumberOfParticles();k++){
         for (int d = 0; d < m_system->getNumberOfDimensions(); d++){
-            first += (4*particles.at(k)->getPosition()[d]*particles.at(k)->getPosition()[d]*m_parameters[d]*m_parameters[d])
-                    -m_parameters[0]*(2*beta_vector[d]);
+            first += (4*particles.at(k).getPosition()[d]*particles.at(k).getPosition()[d]*m_parameters[d]*m_parameters[d])
+                    -m_parameters[0]*(2*beta_vector[d]); //Where does the last term ??
+            temp5 -= m_parameters[d]*particles.at(k).getPosition()[d];
         }
+        //first -= 2*(m_system->getNumberOfDimensions())*m_parameters[0];// 2*m_parameters[2];
 
         for(int j=0; j<m_system->getNumberOfParticles(); j++){
+            if (j != k){
+
+                R_kj = m_system->computedistanceABS(k,j);
+                temp4 = a / (R_kj * (R_kj - a));
+                temp2 -= temp4*temp4;
+
+                for (int d = 0; d < m_system->getNumberOfDimensions(); d++){ //Is the math correct here?
+
+                    temp6 -= m_parameters[d] * (particles.at(j).getPosition()[d] - particles.at(k).getPosition()[d]);
+                    //temp -= m_parameters[d] * (particles.at(j).getPosition()[d] - particles.at(k).getPosition()[d]);
+
+                }
+
+                temp += 4 * temp6 * temp4;
+                //temp *= 4*temp4;
+            }
+
+
+            for(int i=0; i<m_system->getNumberOfParticles(); i++){
+                if(j!=k && i!=k){
+                    R_ki = m_system->computedistanceABS(k,i);
+                    temp3 += temp4 * a / (R_ki * (R_ki  - a));
+                    //temp3 += a*a / (R_kj * R_ki * (R_kj  - a) * (R_ki -a));
+                }
+            }
+
+
+            /*
+             *
+             *
+             *
             for (int d = 0; d < m_system->getNumberOfDimensions(); d++){
                 if (j != k){
-                    temp4 = a/(m_system->computedistanceABS(k,j)*(m_system->computedistanceABS(k,j)-a));
-                    temp -= 4*m_parameters[d]*(particles.at(j)->getPosition()[d] - particles.at(k)->getPosition()[d]) * temp4;
+                    R_kj = m_system->computedistanceABS(k,j);
+                    temp4 = a / (R_kj * (R_kj - a));
+                    temp -= 4 * m_parameters[d] * (particles.at(j).getPosition()[d] - particles.at(k).getPosition()[d]) * temp4;
                     temp2 -= temp4*temp4;
                 }
                 for(int i=0; i<m_system->getNumberOfParticles(); i++){
-                    if(j!=k && i!=k) temp3+=a*a/(m_system->computedistanceABS(k,j)*m_system->computedistanceABS(k,i)*
-                                                 (m_system->computedistanceABS(k,j)-a)*(m_system->computedistanceABS(k,i)-a));
+                    if(j!=k && i!=k){
+                        R_ki = m_system->computedistanceABS(k,i);
+                        temp3 += a*a / (R_kj * R_ki * (R_kj  - a) * (R_ki -a));
+                    }
                 }
-            }
+            } */
         }
     }
     second=temp;

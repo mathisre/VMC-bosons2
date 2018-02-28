@@ -1,7 +1,7 @@
 #include "randomuniform.h"
 #include <iostream>
 #include <cassert>
-#include "../Math/random.h"
+#include "Math/random.h"
 #include "../particle.h"
 #include "../system.h"
 
@@ -42,14 +42,15 @@ void RandomUniform::setupInitialState() {
              * obviously NOT a good idea).
              */
 
-            position.push_back(m_random->nextDouble()-0.5); //0.5??
+            position.push_back(Random::nextDouble()-0.5); //0.5??
             //position.push_back(i);
         }
-        m_particles.push_back(new Particle());
-        m_particles.at(i)->setNumberOfDimensions(m_numberOfDimensions);
-        m_particles.at(i)->setPosition(position);
-        for (int j=0; j < m_numberOfDimensions; j++) {
-        //cout <<"Position = "<<m_particles.at(i)->getPosition()[j]<<endl;
-        }
+        Particle p;
+        m_particles.push_back(p);
+        m_particles.at(i).setNumberOfDimensions(m_numberOfDimensions);
+        m_particles.at(i).setPosition(position);
+//        for (int j=0; j < m_numberOfDimensions; j++) {
+//        cout <<"position"<<m_particles.at(i)->getPosition()[j]<<endl;
+//        }
     }
 }

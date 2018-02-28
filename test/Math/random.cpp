@@ -1,5 +1,9 @@
 #include "random.h"
 #include <cmath>
+#include <random>
+
+
+using namespace std;
 
 long     Random::iy = 0;
 long     Random::iv[NTAB];
@@ -7,6 +11,10 @@ long     Random::seed = -1;
 void Random::setSeed(long seed) {
     Random::seed = seed;
 }
+
+random_device rd;
+mt19937 gen(rd());
+uniform_real_distribution<double> unif(0.0,1.0);
 
 double Random::nextGaussian(double mean, double standardDeviation) {
     double standardNormalRandomNumber = sqrt( -2.0*log(1.0 - nextDouble()) ) * cos( 6.283185307 * nextDouble() );
@@ -19,6 +27,7 @@ int Random::nextInt(int upperLimit) {
 
 double Random::nextDouble()
 {
+    /*
     int             j;
     long            k;
     double          temp;
@@ -41,5 +50,9 @@ double Random::nextDouble()
     iv[j] = Random::seed;
     if((temp=AM*iy) > RNMX) return RNMX;
     else return temp;
+
+    */
+
+    return unif(gen);
 }
 
