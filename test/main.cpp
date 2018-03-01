@@ -14,18 +14,14 @@
 using namespace std;
 
 /* Notes:
- * Program is not using all the steps? When using 20 MC steps the program
- * says it is using 10^1.3 for some reason.
- * For 10 particles and 20 steps, the numerical is ~15 times faster than the analytical method.
- * Analytical derivative gives 4.7 energy and numerical gives 3.2
- * Analytical 75000 ms and numerical 4860 ms
+ *
  */
 
 
 int main() {
-    int numberOfDimensions  = 1;
+    int numberOfDimensions  = 2;
     int numberOfParticles   = 3;
-    int numberOfSteps       = (int) 1e6;
+    int numberOfSteps       = (int) 1e5;
     double omega            = 1.0;          // Oscillator frequency.
     double omega_z          = 1.0;          // Oscillator frequency z-direction
 

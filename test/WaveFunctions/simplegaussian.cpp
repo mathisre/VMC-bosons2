@@ -96,25 +96,23 @@ double SimpleGaussian::computeDoubleDerivative(std::vector<class Particle>& part
     double temp6 = 0;
     double R_kj = 0;
     double R_ki = 0;
-    vector <double> beta_vector={1,1,m_parameters[2]}; //write in a more fancy way
 
     for(int k=0; k<m_system->getNumberOfParticles();k++){
         for (int d = 0; d < m_system->getNumberOfDimensions(); d++){
             first += (4*particles.at(k).getPosition()[d]*particles.at(k).getPosition()[d]*m_parameters[d]*m_parameters[d])
-                    -m_parameters[0]*(2*beta_vector[d]); //Where does the last term ??
+                    -m_parameters[d]*2;
+                    //-m_parameters[0]*(2*beta_vector[d]);
             temp5 -= m_parameters[d]*particles.at(k).getPosition()[d];
         }
         //first -= 2*(m_system->getNumberOfDimensions())*m_parameters[0];// 2*m_parameters[2];
 
         for(int j=0; j<m_system->getNumberOfParticles(); j++){
             if (j != k){
-
                 R_kj = m_system->computedistanceABS(k,j);
                 temp4 = a / (R_kj * (R_kj - a));
                 temp2 -= temp4*temp4;
 
-                for (int d = 0; d < m_system->getNumberOfDimensions(); d++){ //Is the math correct here?
-
+                for (int d = 0; d < m_system->getNumberOfDimensions(); d++){
                     temp6 -= m_parameters[d] * (particles.at(j).getPosition()[d] - particles.at(k).getPosition()[d]);
                     //temp -= m_parameters[d] * (particles.at(j).getPosition()[d] - particles.at(k).getPosition()[d]);
 
@@ -122,16 +120,17 @@ double SimpleGaussian::computeDoubleDerivative(std::vector<class Particle>& part
 
                 temp += 4 * temp6 * temp4;
                 //temp *= 4*temp4;
-            }
-
-
-            for(int i=0; i<m_system->getNumberOfParticles(); i++){
-                if(j!=k && i!=k){
-                    R_ki = m_system->computedistanceABS(k,i);
-                    temp3 += temp4 * a / (R_ki * (R_ki  - a));
-                    //temp3 += a*a / (R_kj * R_ki * (R_kj  - a) * (R_ki -a));
+                for(int i=0; i<m_system->getNumberOfParticles(); i++){
+                    if(i != k){
+                        R_ki = m_system->computedistanceABS(k,i);
+                        temp3 += temp4 * a / (R_ki * (R_ki  - a));
+                        //temp3 += a*a / (R_kj * R_ki * (R_kj  - a) * (R_ki -a));
+                    }
                 }
             }
+
+
+
 
 
             /*
@@ -154,9 +153,28 @@ double SimpleGaussian::computeDoubleDerivative(std::vector<class Particle>& part
             } */
         }
     }
-    second=temp;
-    third=temp3;
-    fourth=temp2;
+
+    second = temp;
+    third  = temp3;
+    fourth = temp2;
 
     return first+second+third+fourth;
+}
+
+
+double SimpleGaussian::QuantumForce(std::vector<class Particle>& particles) {
+    double u_kj = 0;
+    double first = 0;
+
+    for (int k = 0; k < m_system->getNumberOfParticles(); k++){
+        for (int d = 0; d < m_system->getNumberOfDimensions(); d++){
+
+
+        first -= m_parameters*particles.at(k).getPosition()[d];
+        }
+        for (int j = 0; j < m_system->getNumberOfParticles(); j++){
+
+        }
+    }
+    first *= 2;
 }
