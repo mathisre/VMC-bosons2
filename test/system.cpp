@@ -69,7 +69,7 @@ void System::runMetropolisSteps(int numberOfMetropolisSteps) {
 double System::computedistance(int i){
     double temp=0;
     for(int j=0;j<m_numberOfDimensions;j++){
-    temp+=m_particles.at(i).getPosition()[j]*m_particles.at(i).getPosition()[j];
+        temp+=m_particles.at(i).getPosition()[j]*m_particles.at(i).getPosition()[j];
     }
     return sqrt(temp);
 }
