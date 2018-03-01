@@ -169,24 +169,24 @@ std::vector<double> SimpleGaussian::QuantumForce(std::vector<class Particle>& pa
     double R_kj;
 
     std::vector<double> QuantumForce = std::vector<double>();
+    std::vector<double> idk = std::vector<double>();
 
 
     for (int k = 0; k < m_system->getNumberOfParticles(); k++){
         for (int d = 0; d < m_system->getNumberOfDimensions(); d++){
-            first -= m_parameters[d]*particles.at(k).getPosition()[d];
+            QuantumForce[d] -= m_parameters[d]*particles.at(k).getPosition()[d];
         }
-        QuantumForce.at(k) += first;
         for (int j = 0; j < m_system->getNumberOfParticles(); j++){
             if (j != k){
                 R_kj = m_system->computedistanceABS(k,j);
-                QuantumForce += (particles.at(k).getPosition() - particles.at(j).getPosition()) *
-                        a / (R_kj*R_kj*(R_kj-a));
-
-
+                double constant = a / (R_kj*R_kj*(R_kj-a));
+                for (int d = 0; d < m_system->getNumberOfDimensions(); d++){
+                    QuantumForce[d] += (particles.at(k).getPosition()[d] - particles.at(j).getPosition()[d]) * constant;
+                }
             }
 
         }
     }
-    first *= 2;
+
     return QuantumForce;
 }
