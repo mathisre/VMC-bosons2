@@ -49,7 +49,8 @@ double HarmonicOscillator::computeLocalEnergy(std::vector<Particle> &particles) 
         }
 
 //        for (int j = 0; j < m_system->getNumberOfParticles();j++){
-//            potentialEnergy += (int)(1e10) * (m_system->computedistanceABS(k,j) > m_system->getTrapSize());
+//            //potentialEnergy += (int)(1e10) * (m_system->computedistanceABS(k,j) > m_system->getTrapSize());
+//            if(m_system->computedistanceABS(k,j) < m_system->getTrapSize()) return 0;
 //        }
 
     }

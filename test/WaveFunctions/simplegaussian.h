@@ -6,6 +6,7 @@ public:
     SimpleGaussian(class System* system, double alpha, double beta);
     double evaluate(std::vector<Particle>& particles);
     double computeDoubleDerivative(std::vector<class Particle>& particles);
+    double QuantumForce(std::vector<class Particle>& particles);
 
 protected:
     class WaveFunction* m_wavefunction = nullptr;

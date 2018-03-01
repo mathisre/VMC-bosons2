@@ -19,8 +19,8 @@ using namespace std;
 
 
 int main() {
-    int numberOfDimensions  = 2;
-    int numberOfParticles   = 3;
+    int numberOfDimensions  = 1;
+    int numberOfParticles   = 100;
     int numberOfSteps       = (int) 1e5;
     double omega            = 1.0;          // Oscillator frequency.
     double omega_z          = 1.0;          // Oscillator frequency z-direction
