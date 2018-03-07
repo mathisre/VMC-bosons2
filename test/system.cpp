@@ -10,6 +10,7 @@
 #include "Math/random.h"
 #include <iostream>
 #include <time.h>
+#include "conjugategradient.h"
 
 using namespace std;
 
@@ -25,8 +26,11 @@ bool System::metropolisStep() {
     vector <double> r_old=m_particles.at(randparticle).getPosition();
     double psi_old=m_waveFunction->evaluate(m_particles);
     vector <double> r_new(m_numberOfDimensions);
-    for(int j=0;j<m_numberOfDimensions;j++){
-        r_new[j]=r_old[j]+m_stepLength*(Random::nextDouble()-0.5);
+    vector <double> QuantumForce = m_waveFunction->QuantumForce(m_particles);
+
+    for(int d = 0 ; d < m_numberOfDimensions;d++){
+        r_new[d] = r_old[d] + m_stepLength*(Random::nextDouble()-0.5);
+        //r_new[d] = r_old[d] +  0.5 * QuantumForce[d]*m_timeStep +  m_sqrtTimeStep*(Random::nextDouble()-0.5);
     }
     m_particles.at(randparticle).setPosition(r_new);
     double psi_new=m_waveFunction->evaluate(m_particles);
@@ -42,9 +46,6 @@ void System::runMetropolisSteps(int numberOfMetropolisSteps) {
     m_numberOfMetropolisSteps   = numberOfMetropolisSteps;
     m_sampler->setNumberOfMetropolisSteps(numberOfMetropolisSteps);
 
-    clock_t startTime, endTime;
-
-    startTime = clock();
 
     for (int i=0; i < numberOfMetropolisSteps; i++) {
         bool acceptedStep = metropolisStep();
@@ -57,14 +58,24 @@ void System::runMetropolisSteps(int numberOfMetropolisSteps) {
          */
         //if(m_sampler->getStepNumber()/m_sampler->getNumberOfMetropolisSteps()>1-m_equilibrationFraction)
             m_sampler->sample(acceptedStep);
+
             //cout << i+1 << endl;
+        //if (i % 1000 == 0) m_sampler->writeToFile();
     }
-    endTime = clock();
+
+}
+
+void System::runConjugateGradient(){
+    m_conjugateGradient->conjugateGradientSteps();
+}
+
+void System::printOut()
+{
     m_sampler->computeAverages();
     m_sampler->printOutputToTerminal();
-
-    cout << " Computation time = " << difftime(endTime, startTime) / CLOCKS_PER_SEC << " s" << endl;
 }
+
+
 
 double System::computedistance(int i){
     double temp=0;
@@ -80,7 +91,12 @@ double System::computedistanceABS(int i, int j){
         temp+=(m_particles.at(i).getPosition()[k] - m_particles.at(j).getPosition()[k]) *
                 (m_particles.at(i).getPosition()[k] - m_particles.at(j).getPosition()[k]);
     }
-    return sqrt(temp);
+    return sqrt(temp);{
+    }
+}
+
+void System::openDataFile(string filename){
+    m_sampler->openDataFile(filename);
 }
 
 double System::getTrapSize() const
@@ -91,6 +107,26 @@ double System::getTrapSize() const
 void System::setTrapSize(double trapSize)
 {
     m_trapSize = trapSize;
+}
+
+double System::getTimeStep() const
+{
+    return m_timeStep;
+}
+
+void System::setTimeStep(double timeStep)
+{
+    m_timeStep = timeStep;
+}
+
+double System::getSqrtTimeStep() const
+{
+    return m_sqrtTimeStep;
+}
+
+void System::setSqrtTimeStep(double sqrtTimeStep)
+{
+    m_sqrtTimeStep = sqrtTimeStep;
 }
 
 
@@ -122,5 +158,12 @@ void System::setWaveFunction(WaveFunction* waveFunction) {
 void System::setInitialState(InitialState* initialState) {
     m_initialState = initialState;
 }
+
+
+void System::setConjugateGradient(conjugateGradient* conjugateGradient)
+{
+    m_conjugateGradient = conjugateGradient;
+}
+
 
 

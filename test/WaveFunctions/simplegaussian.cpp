@@ -36,7 +36,7 @@ double SimpleGaussian::evaluate(std::vector<class Particle> &particles) {
     double f=0;
 
 
-    for(int i=0;i<m_system->getNumberOfParticles();i++){
+    for(int i=0;i < m_system->getNumberOfParticles();i++){
 
         for(int j=0;j<m_system->getNumberOfDimensions();j++){
             temp+=particles.at(i).getPosition()[j]*particles.at(i).getPosition()[j];
@@ -111,6 +111,8 @@ double SimpleGaussian::computeDoubleDerivative(std::vector<class Particle>& part
             //temp5 -= m_parameters[d]*particles.at(k).getPosition()[d];
         }
         //first -= 2*(m_system->getNumberOfDimensions())*m_parameters[0];// 2*m_parameters[2];
+
+
         if(a==0) second =0, fourth = 0, third = 0;
         else {
             for(int j=0; j<m_system->getNumberOfParticles(); j++){
@@ -175,17 +177,12 @@ std::vector<double> SimpleGaussian::QuantumForce(std::vector<class Particle>& pa
     double a = 0;
     double R_kj;
 
-    std::vector<double> QuantumForce = std::vector<double>();
-    std::vector<double> idk = std::vector<double>();
+    std::vector<double> QuantumForce(m_system->getNumberOfDimensions());
 
-
-<<<<<<< HEAD
-        first -= m_parameters[d]*particles.at(k).getPosition()[d];
-=======
     for (int k = 0; k < m_system->getNumberOfParticles(); k++){
         for (int d = 0; d < m_system->getNumberOfDimensions(); d++){
             QuantumForce[d] -= m_parameters[d]*particles.at(k).getPosition()[d];
->>>>>>> 8110118d3b39098718ea19524c2e3fd5ea5612d5
+
         }
         for (int j = 0; j < m_system->getNumberOfParticles(); j++){
             if (j != k){
@@ -198,11 +195,9 @@ std::vector<double> SimpleGaussian::QuantumForce(std::vector<class Particle>& pa
 
         }
     }
-<<<<<<< HEAD
-    first *= 2;
-    return 0;
-=======
+
+
 
     return QuantumForce;
->>>>>>> 8110118d3b39098718ea19524c2e3fd5ea5612d5
+
 }

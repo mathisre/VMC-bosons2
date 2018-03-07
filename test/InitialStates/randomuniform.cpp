@@ -4,11 +4,12 @@
 #include "Math/random.h"
 #include "../particle.h"
 #include "../system.h"
+#include <cmath>
 
 using std::cout;
 using std::endl;
 
-RandomUniform::RandomUniform(System* system, int numberOfDimensions, int numberOfParticles, double trapSize)  :
+RandomUniform::RandomUniform(System* system, int numberOfDimensions, int numberOfParticles, double trapSize, double timeStep)  :
         InitialState(system) {
     assert(numberOfDimensions > 0 && numberOfParticles > 0);
     m_numberOfDimensions = numberOfDimensions;
@@ -22,6 +23,9 @@ RandomUniform::RandomUniform(System* system, int numberOfDimensions, int numberO
     m_system->setNumberOfDimensions(numberOfDimensions);
     m_system->setNumberOfParticles(numberOfParticles);
     m_system->setTrapSize(trapSize);
+    m_system->setTimeStep(timeStep);
+    m_system->setSqrtTimeStep(sqrt(timeStep));
+
     setupInitialState();
 }
 

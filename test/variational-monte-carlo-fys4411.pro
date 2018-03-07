@@ -13,7 +13,8 @@ SOURCES += main.cpp \
     InitialStates/randomuniform.cpp \
     Math/random.cpp \
     sampler.cpp \
-    WaveFunctions/simplegaussian.cpp
+    WaveFunctions/simplegaussian.cpp \
+    conjugategradient.cpp
 
 HEADERS += \
     system.h \
@@ -25,5 +26,6 @@ HEADERS += \
     InitialStates/randomuniform.h \
     Math/random.h \
     sampler.h \
-    WaveFunctions/simplegaussian.h
+    WaveFunctions/simplegaussian.h \
+    conjugategradient.h
 
