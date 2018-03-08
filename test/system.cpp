@@ -29,8 +29,8 @@ bool System::metropolisStep() {
     vector <double> QuantumForce = m_waveFunction->QuantumForce(m_particles);
 
     for(int d = 0 ; d < m_numberOfDimensions;d++){
-        r_new[d] = r_old[d] + m_stepLength*(Random::nextDouble()-0.5);
-        //r_new[d] = r_old[d] +  0.5 * QuantumForce[d]*m_timeStep +  m_sqrtTimeStep*(Random::nextDouble()-0.5);
+        //r_new[d] = r_old[d] + m_stepLength*(Random::nextDouble()-0.5);
+        r_new[d] = r_old[d] +  0.5 * QuantumForce[d]*m_timeStep +  m_sqrtTimeStep*(Random::nextDouble()-0.5);
     }
     m_particles.at(randparticle).setPosition(r_new);
     double psi_new=m_waveFunction->evaluate(m_particles);

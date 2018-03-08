@@ -34,8 +34,17 @@ void Sampler::sample(bool acceptedStep) {
     if (acceptedStep==true){
         m_energy = m_system->getHamiltonian()->
                    computeLocalEnergy(m_system->getParticles());
+        for (int i = 0; i < m_system->getNumberOfParticles(); i++){
+            for (int d = 0; d < m_system->getNumberOfDimensions(); d++){
+                m_WFderiv -= m_system->getParticles().at(i).getPosition()[d] * m_system->getParticles().at(i).getPosition()[d];
+                //Remember to include (1,1,beta) vector
+            }
+        }
+        m_WFderivMultELoc = m_WFderiv * m_energy;
     }
-    m_cumulativeEnergy  += m_energy;
+    m_cumulativeEnergy          += m_energy;
+    m_cumulativeWFderiv         += m_WFderiv;
+    m_cumulativeWFderivMultEloc += m_WFderivMultELoc;
     //cout<<m_cumulativeEnergy<<endl;
     m_stepNumber++;
 }
@@ -95,4 +104,54 @@ int Sampler::getStepNumber() const
 int Sampler::getNumberOfMetropolisSteps() const
 {
     return m_numberOfMetropolisSteps;
+}
+
+double Sampler::getWFderivMultELoc() const
+{
+    return m_WFderivMultELoc;
+}
+
+void Sampler::setWFderivMultELoc(double WFderivMultELoc)
+{
+    m_WFderivMultELoc = WFderivMultELoc;
+}
+
+double Sampler::getCumulativeWF() const
+{
+    return m_cumulativeWF;
+}
+
+void Sampler::setCumulativeWF(double cumulativeWF)
+{
+    m_cumulativeWF = cumulativeWF;
+}
+
+double Sampler::getWFderiv() const
+{
+    return m_WFderiv;
+}
+
+void Sampler::setWFderiv(double WFderiv)
+{
+    m_WFderiv = WFderiv;
+}
+
+double Sampler::getCumulativeWFderiv() const
+{
+    return m_cumulativeWFderiv;
+}
+
+void Sampler::setCumulativeWFderiv(double cumulativeWFderiv)
+{
+    m_cumulativeWFderiv = cumulativeWFderiv;
+}
+
+double Sampler::getCumulativeWFderivMultEloc() const
+{
+    return m_cumulativeWFderivMultEloc;
+}
+
+void Sampler::setCumulativeWFderivMultEloc(double cumulativeWFderivMultEloc)
+{
+    m_cumulativeWFderivMultEloc = cumulativeWFderivMultEloc;
 }

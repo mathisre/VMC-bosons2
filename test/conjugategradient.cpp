@@ -22,7 +22,7 @@ void conjugateGradient::conjugateGradientSteps()
     while (energyDerivative > tol)
     {
         m_system->runMetropolisSteps(m_CJsteps);
-        meanEnergy = m_system->m_sampler->m_cumulativeEnergy / getCJsteps();
+
         energyDerivative = findEnergyDerivative();
         // Find new alpha
         iterations++;
@@ -32,7 +32,18 @@ void conjugateGradient::conjugateGradientSteps()
 
 double conjugateGradient::findEnergyDerivative()
 {
-    // Are we supposed to do analytical or numerical here?
+
+    double meanEnergy      = m_system->getSampler()->getEnergy() / getCJsteps();
+    double meanWFderiv     = m_system->getSampler()->getWFderiv() / getCJsteps();
+    double meanWFderivEloc = m_system->getSampler()->getWFderivMultELoc() / getCJsteps();
+
+
+
+
+    // Make the sampler sample the wavefunc deriv and things like that
+    // Then just find the mean and we are good
+
+    return 2 * (meanWFderivEloc - meanEnergy*meanWFderiv);
 }
 
 
