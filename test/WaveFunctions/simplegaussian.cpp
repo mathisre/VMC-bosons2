@@ -110,9 +110,82 @@ double SimpleGaussian::computeDoubleDerivative(std::vector<class Particle>& part
             //-m_parameters[0]*(2*beta_vector[d]);
             //temp5 -= m_parameters[d]*particles.at(k).getPosition()[d];
         }
+    }
+   // if(a==0) return first;
+    int i=0;
+    int j=0;
+    while(i<m_system->getNumberOfParticles()){
+        while(j<m_system->getNumberOfParticles()){
+            for(int k=0; k<i;k++){
+                //first -= 2*(m_system->getNumberOfDimensions())*m_parameters[0];// 2*m_parameters[2];
+                //if(a==0) second =0, fourth = 0, third = 0;
+                //else {
+
+                R_kj = m_system->computedistanceABS(k,j);
+                temp4 = a / (R_kj * (R_kj - a));
+                fourth -= temp4*temp4;
+
+                for (int d = 0; d < m_system->getNumberOfDimensions(); d++){
+                    temp6 -= m_parameters[d] * (particles.at(j).getPosition()[d] - particles.at(k).getPosition()[d]);
+                    //temp -= m_parameters[d] * (particles.at(j).getPosition()[d] - particles.at(k).getPosition()[d]);
+
+                }
+
+                second += temp6 * temp4;
+                //temp *= 4*temp4;
+
+                R_ki = m_system->computedistanceABS(k,i);
+                third += temp4 * a / (R_ki * (R_ki  - a));
+                //temp3 += a*a / (R_kj * R_ki * (R_kj  - a) * (R_ki -a));
+
+
+            }
+            j++;
+        }
+        i++;
+    }
+
+
+
+    /*
+    vector<vector<double>>distancematrix=m_system->computematrixdistance(particles);
+    for(int k=0; k<m_system->getNumberOfParticles();k++){
+        for(int j=0; j<m_system->getNumberOfParticles(); j++){
+            if (j != k){
+                //R_kj = m_system->computedistanceABS(k,j);
+                temp4 = a / (distancematrix[k][j] * (distancematrix[k][j] - a));
+                fourth -= temp4*temp4;
+
+                for (int d = 0; d < m_system->getNumberOfDimensions(); d++){
+                    temp6 -= m_parameters[d] * (particles.at(j).getPosition()[d] - particles.at(k).getPosition()[d]);
+                    //temp -= m_parameters[d] * (particles.at(j).getPosition()[d] - particles.at(k).getPosition()[d]);
+
+                }
+
+                second += temp6 * temp4;
+                //temp *= 4*temp4;
+                for(int i=0; i<m_system->getNumberOfParticles(); i++){
+                    if(i != k){
+                        //R_ki = m_system->computedistanceABS(k,i);
+                        third += temp4 * a / (distancematrix[k][i] * (distancematrix[k][i]  - a));
+                        //temp3 += a*a / (R_kj * R_ki * (R_kj  - a) * (R_ki -a));
+                    }
+                }
+            }
+        }
+    }
+    */
+
+
+
+   return first+4*second*2+third*4+fourth*2;
+}
+
+    /*
+     for(int k=0; k<j;k++){
         //first -= 2*(m_system->getNumberOfDimensions())*m_parameters[0];// 2*m_parameters[2];
-        if(a==0) second =0, fourth = 0, third = 0;
-        else {
+        //if(a==0) second =0, fourth = 0, third = 0;
+        //else {
             for(int j=0; j<m_system->getNumberOfParticles(); j++){
                 if (j != k){
                     R_kj = m_system->computedistanceABS(k,j);
@@ -125,7 +198,7 @@ double SimpleGaussian::computeDoubleDerivative(std::vector<class Particle>& part
 
                     }
 
-                    second += 4 * temp6 * temp4;
+                    second += temp6 * temp4;
                     //temp *= 4*temp4;
                     for(int i=0; i<m_system->getNumberOfParticles(); i++){
                         if(i != k){
@@ -138,8 +211,11 @@ double SimpleGaussian::computeDoubleDerivative(std::vector<class Particle>& part
 
 
 
-
-
+            }
+    }
+    return first+4*second+third+fourth;
+}
+*/
                 /*
              *
              *
@@ -158,15 +234,14 @@ double SimpleGaussian::computeDoubleDerivative(std::vector<class Particle>& part
                     }
                 }
             } */
-            }
-        }
-    }
+
+       // } //else loop
+
     //    second = temp;
     //    third  = temp3;
     //    fourth = temp2;
 
-    return first+second+third+fourth;
-}
+
 
 
 std::vector<double> SimpleGaussian::QuantumForce(std::vector<class Particle>& particles) {
@@ -177,15 +252,11 @@ std::vector<double> SimpleGaussian::QuantumForce(std::vector<class Particle>& pa
 
     std::vector<double> QuantumForce = std::vector<double>();
     std::vector<double> idk = std::vector<double>();
-
-
-<<<<<<< HEAD
+int d=0; int k=0;
         first -= m_parameters[d]*particles.at(k).getPosition()[d];
-=======
     for (int k = 0; k < m_system->getNumberOfParticles(); k++){
         for (int d = 0; d < m_system->getNumberOfDimensions(); d++){
             QuantumForce[d] -= m_parameters[d]*particles.at(k).getPosition()[d];
->>>>>>> 8110118d3b39098718ea19524c2e3fd5ea5612d5
         }
         for (int j = 0; j < m_system->getNumberOfParticles(); j++){
             if (j != k){
@@ -198,11 +269,6 @@ std::vector<double> SimpleGaussian::QuantumForce(std::vector<class Particle>& pa
 
         }
     }
-<<<<<<< HEAD
-    first *= 2;
-    return 0;
-=======
-
     return QuantumForce;
->>>>>>> 8110118d3b39098718ea19524c2e3fd5ea5612d5
+
 }

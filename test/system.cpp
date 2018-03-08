@@ -74,6 +74,33 @@ double System::computedistance(int i){
     return sqrt(temp);
 }
 
+/*
+std::vector<vector<double>> System::computematrixdistance(std::vector<class Particle> &particles){
+             vector<vector<double>> distancematrix(m_numberOfParticles, vector<double>(m_numberOfParticles));
+
+             double temp=0;
+             int j=0;
+             while(j<m_numberOfParticles){
+                 for(int i=0; i<j; i++){
+                     for(int k=0;k<m_numberOfDimensions;k++){
+                         temp+=(m_particles.at(i).getPosition()[k] - m_particles.at(j).getPosition()[k]) *
+                                 (m_particles.at(i).getPosition()[k] - m_particles.at(j).getPosition()[k]);
+                     }
+                     distancematrix[i][j]=sqrt(temp);
+                     j++;
+                 }
+             }
+             while(j<m_numberOfParticles){
+                 for(int i=0; i<j; i++){
+                     distancematrix[j][i]=distancematrix[i][j];
+                     j++;
+                 }
+             }
+      return distancematrix;
+}
+
+*/
+
 double System::computedistanceABS(int i, int j){
     double temp=0;
     for(int k=0;k<m_numberOfDimensions;k++){

@@ -14,6 +14,7 @@ public:
     void setInitialState            (class InitialState* initialState);
     double computedistance          (int i);
     double computedistanceABS       (int i, int j);
+   std::vector<std::vector<double>>    computematrixdistance(std::vector<class Particle> &particles);
     class WaveFunction*             getWaveFunction()   { return m_waveFunction; }
     class Hamiltonian*              getHamiltonian()    { return m_hamiltonian; }
     class Sampler*                  getSampler()        { return m_sampler; }
