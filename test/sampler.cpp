@@ -6,9 +6,11 @@
 #include "particle.h"
 #include "Hamiltonians/hamiltonian.h"
 #include "WaveFunctions/wavefunction.h"
-
+#include <string>
+#include <fstream>
 using std::cout;
 using std::endl;
+std::ofstream ofile;
 
 
 Sampler::Sampler(System* system) {
@@ -45,6 +47,7 @@ void Sampler::printOutputToTerminal() {
     int     p  = m_system->getWaveFunction()->getNumberOfParameters();
     double  ef = m_system->getEquilibrationFraction();
     std::vector<double> pa = m_system->getWaveFunction()->getParameters();
+    ofile.close();
 
     cout << endl;
     cout << "  -- System info -- " << endl;
@@ -64,11 +67,24 @@ void Sampler::printOutputToTerminal() {
     cout << endl;
 }
 
+
+
 void Sampler::computeAverages() {
     /* Compute the averages of the sampled quantities. You need to think
      * thoroughly through what is written here currently; is this correct?
      */
     m_energy = m_cumulativeEnergy / m_system->getNumberOfMetropolisSteps();
+}
+
+
+void Sampler::openDataFile(std::string filename){
+    if (filename != "0") ofile.open(filename);
+
+}
+
+
+void Sampler::writeToFile(){
+    if (ofile.is_open()) ofile << m_energy << endl;
 }
 
 int Sampler::getStepNumber() const

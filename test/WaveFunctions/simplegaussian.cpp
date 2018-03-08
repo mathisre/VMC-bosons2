@@ -36,7 +36,7 @@ double SimpleGaussian::evaluate(std::vector<class Particle> &particles) {
     double f=0;
 
 
-    for(int i=0;i<m_system->getNumberOfParticles();i++){
+    for(int i=0;i < m_system->getNumberOfParticles();i++){
 
         for(int j=0;j<m_system->getNumberOfDimensions();j++){
             temp+=particles.at(i).getPosition()[j]*particles.at(i).getPosition()[j];
@@ -184,8 +184,15 @@ double SimpleGaussian::computeDoubleDerivative(std::vector<class Particle>& part
     /*
      for(int k=0; k<j;k++){
         //first -= 2*(m_system->getNumberOfDimensions())*m_parameters[0];// 2*m_parameters[2];
+<<<<<<< HEAD
         //if(a==0) second =0, fourth = 0, third = 0;
         //else {
+=======
+
+
+        if(a==0) second =0, fourth = 0, third = 0;
+        else {
+>>>>>>> e3866af46ea3d05141cab421ed87bbd892d8cac1
             for(int j=0; j<m_system->getNumberOfParticles(); j++){
                 if (j != k){
                     R_kj = m_system->computedistanceABS(k,j);
@@ -250,6 +257,7 @@ std::vector<double> SimpleGaussian::QuantumForce(std::vector<class Particle>& pa
     double a = 0;
     double R_kj;
 
+<<<<<<< HEAD
     std::vector<double> QuantumForce = std::vector<double>();
     std::vector<double> idk = std::vector<double>();
 int d=0; int k=0;
@@ -257,6 +265,14 @@ int d=0; int k=0;
     for (int k = 0; k < m_system->getNumberOfParticles(); k++){
         for (int d = 0; d < m_system->getNumberOfDimensions(); d++){
             QuantumForce[d] -= m_parameters[d]*particles.at(k).getPosition()[d];
+=======
+    std::vector<double> QuantumForce(m_system->getNumberOfDimensions());
+
+    for (int k = 0; k < m_system->getNumberOfParticles(); k++){
+        for (int d = 0; d < m_system->getNumberOfDimensions(); d++){
+            QuantumForce[d] -= m_parameters[d]*particles.at(k).getPosition()[d];
+
+>>>>>>> e3866af46ea3d05141cab421ed87bbd892d8cac1
         }
         for (int j = 0; j < m_system->getNumberOfParticles(); j++){
             if (j != k){
@@ -269,6 +285,12 @@ int d=0; int k=0;
 
         }
     }
+<<<<<<< HEAD
+=======
+
+
+
+>>>>>>> e3866af46ea3d05141cab421ed87bbd892d8cac1
     return QuantumForce;
 
 }

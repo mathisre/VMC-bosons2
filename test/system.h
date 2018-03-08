@@ -1,5 +1,7 @@
 #pragma once
 #include <vector>
+#include <string>
+
 
 class System {
 public:
@@ -12,6 +14,10 @@ public:
     void setHamiltonian             (class Hamiltonian* hamiltonian);
     void setWaveFunction            (class WaveFunction* waveFunction);
     void setInitialState            (class InitialState* initialState);
+    void setConjugateGradient       (class conjugateGradient* conjugateGradient);
+    void runConjugateGradient       ();
+    void openDataFile               (std::string filename);
+    void printOut                   ();
     double computedistance          (int i);
     double computedistanceABS       (int i, int j);
    std::vector<std::vector<double>>    computematrixdistance(std::vector<class Particle> &particles);
@@ -27,6 +33,12 @@ public:
     double getTrapSize() const;
     void setTrapSize(double trapSize);
 
+    double getTimeStep() const;
+    void setTimeStep(double timeStep);
+
+    double getSqrtTimeStep() const;
+    void setSqrtTimeStep(double sqrtTimeStep);
+
 private:
     int                             m_numberOfParticles = 0;
     int                             m_numberOfDimensions = 0;
@@ -34,10 +46,13 @@ private:
     double                          m_equilibrationFraction = 0.0;
     double                          m_stepLength = 0.1;
     double                          m_trapSize = 0;
+    double                          m_timeStep = 0;
+    double                          m_sqrtTimeStep = 0;
     class WaveFunction*             m_waveFunction = nullptr;
     class Hamiltonian*              m_hamiltonian = nullptr;
     class InitialState*             m_initialState = nullptr;
     class Sampler*                  m_sampler = nullptr;
+    class conjugateGradient*        m_conjugateGradient = nullptr;
     //class Random*                   m_random = nullptr;
     std::vector<class Particle>    m_particles = std::vector<class Particle>();
 };
