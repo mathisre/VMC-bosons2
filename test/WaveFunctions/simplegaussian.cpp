@@ -252,28 +252,12 @@ double SimpleGaussian::computeDoubleDerivative(std::vector<class Particle>& part
 
 
 std::vector<double> SimpleGaussian::QuantumForce(std::vector<class Particle>& particles) {
-    double u_p = 0;
-    double first = 0;
+
     double a = 0;
     double R_kj;
 
-<<<<<<< HEAD
-    std::vector<double> QuantumForce = std::vector<double>();
-    std::vector<double> idk = std::vector<double>();
-int d=0; int k=0;
-        first -= m_parameters[d]*particles.at(k).getPosition()[d];
+    std::vector<double> QuantumForce(3);
     for (int k = 0; k < m_system->getNumberOfParticles(); k++){
-        for (int d = 0; d < m_system->getNumberOfDimensions(); d++){
-            QuantumForce[d] -= m_parameters[d]*particles.at(k).getPosition()[d];
-=======
-    std::vector<double> QuantumForce(m_system->getNumberOfDimensions());
-
-    for (int k = 0; k < m_system->getNumberOfParticles(); k++){
-        for (int d = 0; d < m_system->getNumberOfDimensions(); d++){
-            QuantumForce[d] -= m_parameters[d]*particles.at(k).getPosition()[d];
-
->>>>>>> e3866af46ea3d05141cab421ed87bbd892d8cac1
-        }
         for (int j = 0; j < m_system->getNumberOfParticles(); j++){
             if (j != k){
                 R_kj = m_system->computedistanceABS(k,j);
@@ -282,15 +266,11 @@ int d=0; int k=0;
                     QuantumForce[d] += (particles.at(k).getPosition()[d] - particles.at(j).getPosition()[d]) * constant;
                 }
             }
-
         }
     }
-<<<<<<< HEAD
-=======
 
 
 
->>>>>>> e3866af46ea3d05141cab421ed87bbd892d8cac1
     return QuantumForce;
 
 }
