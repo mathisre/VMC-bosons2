@@ -9,6 +9,7 @@
 #include "InitialStates/initialstate.h"
 #include "Math/random.h"
 #include <iostream>
+#include <fstream>
 #include <time.h>
 #include "conjugategradient.h"
 
@@ -26,17 +27,20 @@ bool System::metropolisStep() {
     vector <double> r_old=m_particles.at(randparticle).getPosition();
     double psi_old=m_waveFunction->evaluate(m_particles);
     vector <double> r_new(m_numberOfDimensions);
+
     vector <double> QuantumForce = m_waveFunction->QuantumForce(m_particles);
 
     for(int d = 0 ; d < m_numberOfDimensions;d++){
-        //r_new[d] = r_old[d] + m_stepLength*(Random::nextDouble()-0.5);
-        r_new[d] = r_old[d] +  0.5 * QuantumForce[d]*m_timeStep +  m_sqrtTimeStep*(Random::nextDouble()-0.5);
+        r_new[d] = r_old[d] + m_stepLength*(Random::nextDouble()-0.5);
+        //r_new[d] = r_old[d] +  0.5 * QuantumForce[d]*m_timeStep +  m_sqrtTimeStep*(Random::nextDouble()-0.5);
     }
     m_particles.at(randparticle).setPosition(r_new);
     double psi_new=m_waveFunction->evaluate(m_particles);
 
     double random_number=Random::nextDouble();
-    if(random_number<=psi_new*psi_new/(psi_old*psi_old)) return true;
+    //cout << random_number << endl;
+    //cout << psi_new * psi_new / (psi_old * psi_old) << endl;
+    if (random_number <= psi_new * psi_new / (psi_old * psi_old)) return true;
     else m_particles.at(randparticle).setPosition(r_old); return false;
 }
 
@@ -44,6 +48,8 @@ void System::runMetropolisSteps(int numberOfMetropolisSteps) {
     m_particles                 = m_initialState->getParticles();
     m_sampler                   = new Sampler(this);
     m_numberOfMetropolisSteps   = numberOfMetropolisSteps;
+    getSampler()->setStepNumber(0);
+    getSampler()->setAcceptedNumber(0);
     m_sampler->setNumberOfMetropolisSteps(numberOfMetropolisSteps);
 
 
@@ -56,11 +62,14 @@ void System::runMetropolisSteps(int numberOfMetropolisSteps) {
          * for a while. You may handle this using the fraction of steps which
          * are equilibration steps; m_equilibrationFraction.
          */
-        //if(m_sampler->getStepNumber()/m_sampler->getNumberOfMetropolisSteps()>1-m_equilibrationFraction)
+        //if(m_sampler->getStepNumber()/m_sampler->getNumberOfMetropolisSteps() > 1.0 - m_equilibrationFraction){
             m_sampler->sample(acceptedStep);
+            //if (i % 1000 == 0)
+                m_sampler->writeToFile();
+
 
             //cout << i+1 << endl;
-        //if (i % 1000 == 0) m_sampler->writeToFile();
+
     }
 
 }

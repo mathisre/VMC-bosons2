@@ -13,7 +13,7 @@ Hamiltonian::Hamiltonian(System* system) {
 
 double Hamiltonian::computeNumericalDoubleDerivative (std::vector<Particle> &particles){
 
-    double h=0.00000001;
+    double h=0.0001;
     double h_squared=h*h;
     double wf=0;
     double dimension=m_system->getNumberOfDimensions()*m_system->getNumberOfParticles();

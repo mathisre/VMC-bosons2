@@ -31,10 +31,18 @@ public:
     double getCumulativeWFderivMultEloc() const;
     void setCumulativeWFderivMultEloc(double cumulativeWFderivMultEloc);
 
+    int getAcceptedNumber() const;
+    void setAcceptedNumber(int acceptedNumber);
+
+    void setStepNumber(int stepNumber);
+
 private:
     int     m_numberOfMetropolisSteps  = 0;
     int     m_stepNumber               = 0;
+    int     m_acceptedNumber           = 0;
     double  m_energy                   = 0;
+    double  m_energySquared            = 0;
+    double  m_cumulativeEnergySquared  = 0;
     double  m_cumulativeEnergy         = 0;
     double  m_cumulativeWF             = 0;
     double  m_WFderiv                  = 0;

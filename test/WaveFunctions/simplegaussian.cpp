@@ -111,7 +111,7 @@ double SimpleGaussian::computeDoubleDerivative(std::vector<class Particle>& part
             //temp5 -= m_parameters[d]*particles.at(k).getPosition()[d];
         }
     }
-   // if(a==0) return first;
+    if(a==0) return first;
     int i=0;
     int j=0;
     while(i<m_system->getNumberOfParticles()){
@@ -144,9 +144,8 @@ double SimpleGaussian::computeDoubleDerivative(std::vector<class Particle>& part
         }
         i++;
     }
-//cout<<"third"<<third<<endl;
-//cout<<"second"<<second<<endl;
-//cout<<"fourth"<<fourth<<endl;
+
+
 
     /*
     vector<vector<double>>distancematrix=m_system->computematrixdistance(particles);

@@ -43,7 +43,7 @@ private:
     int                             m_numberOfParticles = 0;
     int                             m_numberOfDimensions = 0;
     int                             m_numberOfMetropolisSteps = 0;
-    double                          m_equilibrationFraction = 0.0;
+    double                          m_equilibrationFraction = 0;
     double                          m_stepLength = 0.1;
     double                          m_trapSize = 0;
     double                          m_timeStep = 0;

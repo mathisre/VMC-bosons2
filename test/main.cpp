@@ -23,7 +23,7 @@ using namespace std;
 
 int main() {
     int numberOfDimensions  = 1;
-    int numberOfParticles   = 50;
+    int numberOfParticles   = 10;
     int numberOfSteps       = (int) 1e5;
     double omega            = 1.0;          // Oscillator frequency.
     double omega_z          = 1.0;          // Oscillator frequency z-direction
@@ -33,16 +33,15 @@ int main() {
     double alpha            = 1.0/(2.0);    //*a_ho*a_ho);          // Variational parameter.
     double beta             = 1;            // beta
     double trapSize         = 0;            // trap size
-    double stepLength       = 0.1;          // Metropolis step length.
-    double equilibration    = 0.1;          // Amount of the total steps used for equilibration.
+    double stepLength       = 1.0;          // Metropolis step length.
+    double equilibration    = 0.5;          // Amount of the total steps used for equilibration.
 
-    string filename         = "0";          // Set equal to "0" if you don't want any data
+    string filename         = "E_0part.txt";          // Set equal to "0" if you don't want any data
 
     // Optimalization of alpha using steepest descent method
     int CJsteps       = (int) 1e4;    // Number of steps MC steps
     double alphaZero        = 0.25;         // Initial guess
 
-    cout << "hello";
     System* system = new System();
 
     system->setHamiltonian              (new HarmonicOscillator(system, omega, omega_z));
