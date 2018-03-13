@@ -32,31 +32,25 @@ void Sampler::sample(bool acceptedStep) {
     /* Here you should sample all the interesting things you want to measure.
      * Note that there are (way) more than the single one here currently.
      */
-    if (acceptedStep==true){
-        m_acceptedNumber++;
-        m_energy = m_system->getHamiltonian()->
-                   computeLocalEnergy(m_system->getParticles());
-        for (int i = 0; i < m_system->getNumberOfDimensions(); i++){
-            for (int d = 0; d < m_system->getNumberOfParticles(); d++){
-                m_WFderiv -= m_system->getParticles().at(i).getPosition()[d] * m_system->getParticles().at(i).getPosition()[d];
-                //Remember to include (1,1,beta) vector
+    if ((double)getStepNumber()/getNumberOfMetropolisSteps() > 1.0 - m_system->getEquilibrationFraction()){
+        if (acceptedStep==true){
+            m_acceptedNumber++;
+            m_energy = m_system->getHamiltonian()->
+                       computeLocalEnergy(m_system->getParticles());
+            for (int i = 0; i < m_system->getNumberOfDimensions(); i++){
+                for (int d = 0; d < m_system->getNumberOfParticles(); d++){
+                    m_WFderiv -= m_system->getParticles().at(i).getPosition()[d] * m_system->getParticles().at(i).getPosition()[d];
+                    //Remember to include (1,1,beta) vector
+                }
             }
+            m_WFderivMultELoc = m_WFderiv * m_energy;
         }
-        m_WFderivMultELoc = m_WFderiv * m_energy;
+
+        m_cumulativeEnergy          += m_energy;
+        m_cumulativeEnergySquared   += m_energy*m_energy;
+        m_cumulativeWFderiv         += m_WFderiv;
+        m_cumulativeWFderivMultEloc += m_WFderivMultELoc;
     }
-
-    //MPI_Reduce(&m_energy, &m_cumulativeEnergy, 1, MPI_DOUBLE, MPI_SUM, 0, MPI_COMM_WORLD);
-    double energySqr = m_energy*m_energy;
-
-    //MPI_Reduce(&energySqr, &m_cumulativeEnergySquared, 1, MPI_DOUBLE, MPI_SUM, 0, MPI_COMM_WORLD);
-
-    m_cumulativeEnergy          += m_energy;
-    m_cumulativeEnergySquared   += m_energy*m_energy;
-    m_cumulativeWFderiv         += m_WFderiv;
-    m_cumulativeWFderivMultEloc += m_WFderivMultELoc;
-
-
-    //cout<<m_cumulativeEnergy<<endl;
     m_stepNumber++;
 }
 
@@ -102,10 +96,9 @@ void Sampler::computeAverages(int myrank, int numprocs)
     MPI_Reduce(&m_cumulativeEnergy, &m_totalCumulativeEnergy, 1, MPI_DOUBLE, MPI_SUM, 0, MPI_COMM_WORLD);
     MPI_Reduce(&m_cumulativeEnergySquared, &m_totalCumulativeEnergySqr, 1, MPI_DOUBLE, MPI_SUM, 0, MPI_COMM_WORLD);
     MPI_Reduce(&m_acceptedNumber, &m_totalAcceptedNumber, 1, MPI_INT, MPI_SUM, 0, MPI_COMM_WORLD);
-    if (myrank == 0)
-    {
-        m_energy = m_totalCumulativeEnergy / (m_system->getNumberOfMetropolisSteps()*numprocs);
-        m_cumulativeEnergySquared= m_totalCumulativeEnergySqr/(m_system->getNumberOfMetropolisSteps()*numprocs);
+    if (myrank == 0){
+        m_energy = m_totalCumulativeEnergy / (m_system->getNumberOfMetropolisSteps()*m_system->getEquilibrationFraction()*numprocs);
+        m_cumulativeEnergySquared= m_totalCumulativeEnergySqr/(m_system->getNumberOfMetropolisSteps()*m_system->getEquilibrationFraction()*numprocs);
         m_acceptedNumber = m_totalAcceptedNumber;
     }
 }

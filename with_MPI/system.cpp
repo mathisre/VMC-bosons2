@@ -31,8 +31,8 @@ bool System::metropolisStep() {
     vector <double> QuantumForce = m_waveFunction->QuantumForce(m_particles);
 
     for(int d = 0 ; d < m_numberOfDimensions;d++){
-        r_new[d] = r_old[d] + m_stepLength*(Random::nextDouble()-0.5);
-        //r_new[d] = r_old[d] +  0.5 * QuantumForce[d]*m_timeStep +  m_sqrtTimeStep*(Random::nextDouble()-0.5);
+        //r_new[d] = r_old[d] + m_stepLength*(Random::nextDouble()-0.5);
+        r_new[d] = r_old[d] +  0.5 * QuantumForce[d]*m_timeStep +  m_sqrtTimeStep*(Random::nextDouble()-0.5);
     }
     m_particles.at(randparticle).setPosition(r_new);
     double psi_new=m_waveFunction->evaluate(m_particles);
@@ -63,9 +63,12 @@ void System::runMetropolisSteps(int numberOfMetropolisSteps) {
          * are equilibration steps; m_equilibrationFraction.
          */
         //if(m_sampler->getStepNumber()/m_sampler->getNumberOfMetropolisSteps() > 1.0 - m_equilibrationFraction){
+          //  cout << "hekki" << endl;
             m_sampler->sample(acceptedStep);
+
+
             //if (i % 1000 == 0)
-                m_sampler->writeToFile();
+                //m_sampler->writeToFile();
 
 
             //cout << i+1 << endl;

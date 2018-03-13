@@ -24,7 +24,7 @@ int main(int argc, char* argv[])
     if (argc < 2) {
         cout << "-------------------------------------------------------" << endl
              << "Write number of dimensions (<= 3) and particles." << endl
-             << "For example: mpirun -n 4 ./prog.x 2 5" << endl
+             << "For example; mpirun -n 4 ./prog.x 2 5" << endl
              << "-------------------------------------------------------" << endl;
         exit(EXIT_FAILURE);
     }
@@ -33,16 +33,13 @@ int main(int argc, char* argv[])
         numberOfDimensions  = atoi(argv[1]);
     }
 
-//    MPI_Bcast (&numberOfParticles,  1, MPI_INT, 0, MPI_COMM_WORLD);
-//    MPI_Bcast (&numberOfDimensions, 1, MPI_INT, 0, MPI_COMM_WORLD);
-
 
     MPI_Init(&argc,&argv);
     MPI_Comm_size(MPI_COMM_WORLD, &numprocs);
     MPI_Comm_rank(MPI_COMM_WORLD, &myrank);
 
 
-    int numberOfSteps       = (int) 1e4 / (int) numprocs;
+    int numberOfSteps       = (int) 1e5 / (int) numprocs;
     double omega            = 1.0;          // Oscillator frequency.
     double omega_z          = 1.0;          // Oscillator frequency z-direction
     double timeStep         = 0.001;        // Importance sampling time step
@@ -52,7 +49,7 @@ int main(int argc, char* argv[])
     double beta             = 1;            // beta
     double trapSize         = 0;            // trap size
     double stepLength       = 1.0;          // Metropolis step length.
-    double equilibration    = 0.5;          // Amount of the total steps used for equilibration.
+    double equilibration    = 0.4;          // Amount of the total steps used for equilibration.
 
     string filename         = "0";          // Set equal to "0" if you don't want any data
 
