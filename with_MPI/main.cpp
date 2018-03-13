@@ -2,6 +2,7 @@
 #include <random>
 #include <cmath>
 #include "system.h"
+#include "mpi/mpi.h"
 #include "particle.h"
 #include "WaveFunctions/wavefunction.h"
 #include "WaveFunctions/simplegaussian.h"
@@ -16,15 +17,32 @@
 
 using namespace std;
 
-/* Notes:
- *
- */
+int main(int argc, char* argv[])
+{
+    int numprocs, myrank, numberOfParticles, numberOfDimensions;
+
+    if (argc < 2) {
+        cout << "-------------------------------------------------------" << endl
+             << "Write number of dimensions (<= 3) and particles." << endl
+             << "For example: mpirun -n 4 ./prog.x 2 5" << endl
+             << "-------------------------------------------------------" << endl;
+        exit(EXIT_FAILURE);
+    }
+    if ( argc >= 2) {
+        numberOfParticles   = atoi(argv[2]);
+        numberOfDimensions  = atoi(argv[1]);
+    }
+
+//    MPI_Bcast (&numberOfParticles,  1, MPI_INT, 0, MPI_COMM_WORLD);
+//    MPI_Bcast (&numberOfDimensions, 1, MPI_INT, 0, MPI_COMM_WORLD);
 
 
-int main() {
-    int numberOfDimensions  = 2;
-    int numberOfParticles   = 3;
-    int numberOfSteps       = (int) 1e5;
+    MPI_Init(&argc,&argv);
+    MPI_Comm_size(MPI_COMM_WORLD, &numprocs);
+    MPI_Comm_rank(MPI_COMM_WORLD, &myrank);
+
+
+    int numberOfSteps       = (int) 1e4 / (int) numprocs;
     double omega            = 1.0;          // Oscillator frequency.
     double omega_z          = 1.0;          // Oscillator frequency z-direction
     double timeStep         = 0.001;        // Importance sampling time step
@@ -36,7 +54,7 @@ int main() {
     double stepLength       = 1.0;          // Metropolis step length.
     double equilibration    = 0.5;          // Amount of the total steps used for equilibration.
 
-    string filename         = "E_0part.txt";          // Set equal to "0" if you don't want any data
+    string filename         = "0";          // Set equal to "0" if you don't want any data
 
     // Optimalization of alpha using steepest descent method
     int CJsteps       = (int) 1e4;    // Number of steps MC steps
@@ -53,18 +71,23 @@ int main() {
     system->setEquilibrationFraction    (equilibration);
     system->setStepLength               (stepLength);
 
-    clock_t startTime, endTime;
+    double startTime = MPI_Wtime();
 
 
 
     //system->setConjugateGradient(new conjugateGradient(system, alphaZero, CJsteps));
 
-    startTime = clock();
-    system->runMetropolisSteps          (numberOfSteps);
-    system->printOut();
 
-    endTime = clock();
+    //cout << "Rank = " << myrank << endl;
 
-    cout << " Computation time = " << difftime(endTime, startTime) / CLOCKS_PER_SEC << " s" << endl;
+    system->runMetropolisSteps(numberOfSteps);
+
+    system->printOut(myrank, numprocs);
+
+    double endTime = MPI_Wtime();
+
+    MPI_Finalize();
+
+    if (myrank == 0) cout << " Computation time = " << endTime - startTime << " s" << endl;
     return 0;
 }
