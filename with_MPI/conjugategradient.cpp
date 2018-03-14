@@ -6,9 +6,13 @@
 #include "particle.h"
 #include "sampler.h"
 
-conjugateGradient::conjugateGradient(System *system, double alphaZero, int CJsteps)
+conjugateGradient::conjugateGradient(System *system, double alphaZero, double beta, int CJsteps)
 {
     setAlpha(alphaZero);
+    m_CJparameters.reserve(3);
+    m_CJparameters.push_back(alphaZero);
+    m_CJparameters.push_back(alphaZero);
+    m_CJparameters.push_back(alphaZero*beta);
     setCJsteps(CJsteps);
 }
 
@@ -16,32 +20,28 @@ conjugateGradient::conjugateGradient(System *system, double alphaZero, int CJste
 void conjugateGradient::conjugateGradientSteps()
 {
     double energyDerivative, meanEnergy;
-    double iterations = 0;
+    m_iterations = 0;
     double tol = (double) 1e-10;
+    m_system->getWaveFunction()->setParameters(m_CJparameters);
+    m_system->runMetropolisSteps(m_CJsteps);
     energyDerivative =findEnergyDerivative();
-    while (energyDerivative > tol)
-    {
+    while (energyDerivative > tol){
         m_system->runMetropolisSteps(m_CJsteps);
 
         energyDerivative = findEnergyDerivative();
         // Find new alpha
-        iterations++;
+
+        m_system->getWaveFunction()->setParameters(m_CJparameters);
+        m_iterations++;
     }
 
 }
 
 double conjugateGradient::findEnergyDerivative()
 {
-
-    double meanEnergy      = m_system->getSampler()->getEnergy() / getCJsteps();
-    double meanWFderiv     = m_system->getSampler()->getWFderiv() / getCJsteps();
-    double meanWFderivEloc = m_system->getSampler()->getWFderivMultELoc() / getCJsteps();
-
-
-
-
-    // Make the sampler sample the wavefunc deriv and things like that
-    // Then just find the mean and we are good
+    double meanEnergy      = m_system->getSampler()->getCumulativeEnergy() / getCJsteps();
+    double meanWFderiv     = m_system->getSampler()->getCumulativeWFderiv() / getCJsteps();
+    double meanWFderivEloc = m_system->getSampler()->getCumulativeWFderivMultEloc() / getCJsteps();
 
     return 2 * (meanWFderivEloc - meanEnergy*meanWFderiv);
 }
@@ -65,4 +65,14 @@ int conjugateGradient::getCJsteps() const
 void conjugateGradient::setCJsteps(int value)
 {
     m_CJsteps = value;
+}
+
+std::vector<double> conjugateGradient::getCJparameters() const
+{
+    return m_CJparameters;
+}
+
+void conjugateGradient::setCJparameters(const std::vector<double> &CJparameters)
+{
+    m_CJparameters = CJparameters;
 }

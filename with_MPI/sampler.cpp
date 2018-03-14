@@ -32,7 +32,7 @@ void Sampler::sample(bool acceptedStep) {
     /* Here you should sample all the interesting things you want to measure.
      * Note that there are (way) more than the single one here currently.
      */
-    if ((double)getStepNumber()/getNumberOfMetropolisSteps() > 1.0 - m_system->getEquilibrationFraction()){
+
         if (acceptedStep==true){
             m_acceptedNumber++;
             m_energy = m_system->getHamiltonian()->
@@ -45,7 +45,9 @@ void Sampler::sample(bool acceptedStep) {
             }
             m_WFderivMultELoc = m_WFderiv * m_energy;
         }
+        if (m_energy == 0) cout << m_energy << endl;
 
+    if ((double)getStepNumber()/getNumberOfMetropolisSteps() >= 1.0 - m_system->getEquilibrationFraction()){
         m_cumulativeEnergy          += m_energy;
         m_cumulativeEnergySquared   += m_energy*m_energy;
         m_cumulativeWFderiv         += m_WFderiv;
@@ -97,8 +99,8 @@ void Sampler::computeAverages(int myrank, int numprocs)
     MPI_Reduce(&m_cumulativeEnergySquared, &m_totalCumulativeEnergySqr, 1, MPI_DOUBLE, MPI_SUM, 0, MPI_COMM_WORLD);
     MPI_Reduce(&m_acceptedNumber, &m_totalAcceptedNumber, 1, MPI_INT, MPI_SUM, 0, MPI_COMM_WORLD);
     if (myrank == 0){
-        m_energy = m_totalCumulativeEnergy / (m_system->getNumberOfMetropolisSteps()*m_system->getEquilibrationFraction()*numprocs);
-        m_cumulativeEnergySquared= m_totalCumulativeEnergySqr/(m_system->getNumberOfMetropolisSteps()*m_system->getEquilibrationFraction()*numprocs);
+        m_energy                  = m_totalCumulativeEnergy    / (m_system->getNumberOfMetropolisSteps()*m_system->getEquilibrationFraction()*numprocs);
+        m_cumulativeEnergySquared = m_totalCumulativeEnergySqr / (m_system->getNumberOfMetropolisSteps()*m_system->getEquilibrationFraction()*numprocs);
         m_acceptedNumber = m_totalAcceptedNumber;
     }
 }
@@ -187,4 +189,14 @@ void Sampler::setAcceptedNumber(int acceptedNumber)
 void Sampler::setStepNumber(int stepNumber)
 {
     m_stepNumber = stepNumber;
+}
+
+double Sampler::getCumulativeEnergy() const
+{
+    return m_cumulativeEnergy;
+}
+
+void Sampler::setCumulativeEnergy(double cumulativeEnergy)
+{
+    m_cumulativeEnergy = cumulativeEnergy;
 }

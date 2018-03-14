@@ -39,7 +39,7 @@ int main(int argc, char* argv[])
     MPI_Comm_rank(MPI_COMM_WORLD, &myrank);
 
 
-    int numberOfSteps       = (int) 1e5 / (int) numprocs;
+    int numberOfSteps       = (int) 1e+6 / numprocs ;// (int) numprocs;
     double omega            = 1.0;          // Oscillator frequency.
     double omega_z          = 1.0;          // Oscillator frequency z-direction
     double timeStep         = 0.001;        // Importance sampling time step
@@ -49,9 +49,10 @@ int main(int argc, char* argv[])
     double beta             = 1;            // beta
     double trapSize         = 0;            // trap size
     double stepLength       = 1.0;          // Metropolis step length.
-    double equilibration    = 0.4;          // Amount of the total steps used for equilibration.
+    double equilibration    = 0.25;          // Amount of the total steps used for equilibration.
 
-    string filename         = "0";          // Set equal to "0" if you don't want any data
+    string filename         = "ground_state_" + to_string(myrank)  + ".dat";          // Set equal to "0" if you don't want any data
+
 
     // Optimalization of alpha using steepest descent method
     int CJsteps       = (int) 1e4;    // Number of steps MC steps
@@ -72,7 +73,7 @@ int main(int argc, char* argv[])
 
 
 
-    //system->setConjugateGradient(new conjugateGradient(system, alphaZero, CJsteps));
+    //system->setConjugateGradient(new conjugateGradient(system, alphaZero, beta CJsteps));
 
 
     //cout << "Rank = " << myrank << endl;
@@ -85,6 +86,6 @@ int main(int argc, char* argv[])
 
     MPI_Finalize();
 
-    if (myrank == 0) cout << " Computation time = " << endTime - startTime << " s" << endl;
+    if (myrank == 0) cout << " Computation time = " << endTime - startTime << " s" << endl << endl;
     return 0;
 }
