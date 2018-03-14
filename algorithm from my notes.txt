@@ -1,0 +1,25 @@
+Algorithm:
+
+B_k+1 = B_k + u_k + v_k
+	u_k = alpha*uu^T
+	v_k = beta*vv^T
+Standard choice u = y_k, v = B_k*s_k
+
+alpha = 1 / (y_k^T s_k)
+beta = - 1 / (s_k ^T B_k S_k)
+
+B_k+1 = B_k + (y_k * y_k^T) / (y_k^T*s_k) - (B_k*s_k*s_k^T*B_k^T) / (s_k^T*B_k*s_k)
+
+algo:
+
+Start with guess B = identity matrix, x0 initial variational parameter guess
+-Find a direction P_x
+	B_k*P_k = - grad(f(x_k))
+	Since initial B is identity matrix, P_0 = -grad(f(x_0))
+	
+-s_k = alpha_k*P_k  #Note, alpha is the step size 
+
+-y_k = grad(f(x_k+1)) - grad(f(x_k))
+
+-Estimate B_k+1 and repeat until grad(f(x_k+1)) < 10^{-10}
+
