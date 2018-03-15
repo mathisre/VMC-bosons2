@@ -24,14 +24,15 @@ bool System::metropolisStep() {
     int randparticle=Random::nextInt(m_numberOfParticles);
     //cout<<randparticle<<endl;
 
-    vector <double> r_old = m_particles.at(randparticle).getPosition();    
-    vector <double> r_new(m_numberOfDimensions);    
-    vector <double> QuantumForce = m_waveFunction->QuantumForce(m_particles);    
+    vector <double> r_old=m_particles.at(randparticle).getPosition();
     double psi_old=m_waveFunction->evaluate(m_particles);
+    vector <double> r_new(m_numberOfDimensions);
+
+    vector <double> QuantumForce = m_waveFunction->QuantumForce(m_particles);
 
     for(int d = 0 ; d < m_numberOfDimensions;d++){
-        //r_new[d] = r_old[d] + m_stepLength*(Random::nextDouble()-0.5);
-        r_new[d] = r_old[d] +  0.5 * QuantumForce[d]*m_timeStep +  m_sqrtTimeStep*(Random::nextDouble()-0.5);
+        r_new[d] = r_old[d] + m_stepLength*(Random::nextDouble()-0.5);
+        //r_new[d] = r_old[d] +  0.5 * QuantumForce[d]*m_timeStep +  m_sqrtTimeStep*(Random::nextDouble()-0.5);
     }
     m_particles.at(randparticle).setPosition(r_new);
     double psi_new=m_waveFunction->evaluate(m_particles);
@@ -62,10 +63,7 @@ void System::runMetropolisSteps(int numberOfMetropolisSteps) {
          * are equilibration steps; m_equilibrationFraction.
          */
         //if(m_sampler->getStepNumber()/m_sampler->getNumberOfMetropolisSteps() > 1.0 - m_equilibrationFraction){
-          //  cout << "hekki" << endl;
             m_sampler->sample(acceptedStep);
-
-
             //if (i % 1000 == 0)
                 m_sampler->writeToFile();
 
@@ -80,10 +78,10 @@ void System::runConjugateGradient(){
     m_conjugateGradient->conjugateGradientSteps();
 }
 
-void System::printOut(int myrank, int numprocs)
+void System::printOut()
 {
-    m_sampler->computeAverages(myrank, numprocs);
-    if (myrank == 0) m_sampler->printOutputToTerminal(numprocs);
+    m_sampler->computeAverages();
+    m_sampler->printOutputToTerminal();
 }
 
 
