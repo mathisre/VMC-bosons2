@@ -2,7 +2,7 @@
 #include <random>
 #include <cmath>
 #include "system.h"
-#include "mpi/mpi.h"
+#include "mpi.h"
 #include "particle.h"
 #include "WaveFunctions/wavefunction.h"
 #include "WaveFunctions/simplegaussian.h"
@@ -13,6 +13,7 @@
 #include "Math/random.h"
 #include "conjugategradient.h"
 #include <time.h>
+#include "chrono"
 #include <string>
 
 using namespace std;
@@ -20,6 +21,7 @@ using namespace std;
 int main(int argc, char* argv[])
 {
     int numprocs, myrank, numberOfParticles, numberOfDimensions;
+    double timeStep;
 
     if (argc < 2) {
         cout << "-------------------------------------------------------" << endl
@@ -31,6 +33,7 @@ int main(int argc, char* argv[])
     if ( argc >= 2) {
         numberOfParticles   = atoi(argv[2]);
         numberOfDimensions  = atoi(argv[1]);
+        timeStep = atof(argv[3]);
     }
 
 
@@ -39,10 +42,13 @@ int main(int argc, char* argv[])
     MPI_Comm_rank(MPI_COMM_WORLD, &myrank);
 
 
+    auto start = std::chrono::system_clock::now();
+
+
     int numberOfSteps       = (int) 1e+6 / numprocs ;// (int) numprocs;
     double omega            = 1.0;          // Oscillator frequency.
     double omega_z          = 1.0;          // Oscillator frequency z-direction
-    double timeStep         = 0.001;        // Importance sampling time step
+//    double timeStep         = 0.001;        // Importance sampling time step
 
     double a_ho             = 1-2e-4;
     double alpha            = 1.0/(2.0);    //*a_ho*a_ho);          // Variational parameter.
@@ -84,8 +90,16 @@ int main(int argc, char* argv[])
 
     double endTime = MPI_Wtime();
 
+
+    auto end = std::chrono::system_clock::now();
+
     MPI_Finalize();
 
-    if (myrank == 0) cout << " Computation time = " << endTime - startTime << " s" << endl << endl;
+    if (myrank == 0) {
+        cout << " Computation time = " << endTime - startTime << " s" << endl << endl;
+
+        std::chrono::duration<double> diff = end-start;
+        std::cout << "Time " << diff.count() << " s\n"; //display run time
+    }
     return 0;
 }

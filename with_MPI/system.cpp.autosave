@@ -24,7 +24,7 @@ bool System::metropolisStep() {
     int randparticle=Random::nextInt(m_numberOfParticles);
     //cout<<randparticle<<endl;
 
-    vector <double> r_old = m_particles.at(randparticle).getPosition();
+    vector <double> r_old = m_particles.at(randparticle).getPosition();    
     vector <double> r_new(m_numberOfDimensions);    
     vector <double> QuantumForce = m_waveFunction->QuantumForce(m_particles);    
     double psi_old=m_waveFunction->evaluate(m_particles);

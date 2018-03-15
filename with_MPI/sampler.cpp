@@ -7,7 +7,7 @@
 #include "Hamiltonians/hamiltonian.h"
 #include "WaveFunctions/wavefunction.h"
 #include <string>
-#include "mpi/mpi.h"
+#include "mpi.h"
 #include <fstream>
 using std::cout;
 using std::endl;
