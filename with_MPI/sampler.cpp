@@ -47,7 +47,7 @@ void Sampler::sample(bool acceptedStep) {
         }
         if (m_energy == 0) cout << m_energy << endl;
 
-    if ((double)getStepNumber()/getNumberOfMetropolisSteps() >= 1.0 - m_system->getEquilibrationFraction()){
+        if (fabs(m_stepNumber/getNumberOfMetropolisSteps() - (1.0- m_system->getEquilibrationFraction()))<1e-10||m_stepNumber/getNumberOfMetropolisSteps() > (1.0- m_system->getEquilibrationFraction())){
         m_cumulativeEnergy          += m_energy;
         m_cumulativeEnergySquared   += m_energy*m_energy;
         m_cumulativeWFderiv         += m_WFderiv;

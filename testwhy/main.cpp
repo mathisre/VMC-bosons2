@@ -34,7 +34,7 @@ int main() {
     double beta             = 1;            // beta
     double trapSize         = 0;            // trap size
     double stepLength       = 1.0;          // Metropolis step length.
-    double equilibration    = 0.5;          // Amount of the total steps used for equilibration.
+    double equilibration    = 0.7;          // Amount of the total steps used for equilibration.
 
     string filename         = "0";          // Set equal to "0" if you don't want any data
 

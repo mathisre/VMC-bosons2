@@ -41,7 +41,7 @@ void dE_function(Vector  &x,double &fp, Vector &g)
 {
     int numberOfParticles   = 1;
     int numberOfDimensions  = 1;
-    int numberOfSteps       = (int) 1e6;
+    int numberOfSteps       = (int) 1e5;
     double omega            = 1.0;          // Oscillator frequency.
     double omega_z          = 1.0;          // Oscillator frequency z-direction
     double timeStep         = 0.001;        // Importance sampling time step
@@ -51,7 +51,7 @@ void dE_function(Vector  &x,double &fp, Vector &g)
     double beta             = 1;            // beta
     double trapSize         = 0;            // trap size
     double stepLength       = 1.0;          // Metropolis step length.
-    double equilibration    = 0.0;          // Amount of the total steps used for equilibration.
+    double equilibration    = 0.9;          // Amount of the total steps used for equilibration.
 
     string filename         = "0";          // Set equal to "0" if you don't want any data
 
@@ -251,7 +251,7 @@ int main()
      Vector g(n), p(n);
      cout << "Read in guess for alpha" << endl;
      cin >> alpha;
-     gtol = 1.0e-10;
+     gtol = 1.0e-5;
 //   now call dfmin and compute the minimum
      p(0) = alpha;
      dfpmin(p, n, gtol, &iter, &fret, dE_function);

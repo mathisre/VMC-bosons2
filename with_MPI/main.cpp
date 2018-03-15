@@ -55,7 +55,7 @@ int main(int argc, char* argv[])
     double beta             = 1;            // beta
     double trapSize         = 0;            // trap size
     double stepLength       = 1.0;          // Metropolis step length.
-    double equilibration    = 0.25;          // Amount of the total steps used for equilibration.
+    double equilibration    = 0.7;          // Amount of the total steps used for equilibration.
 
     string filename         = "ground_state_" + to_string(myrank)  + ".dat";          // Set equal to "0" if you don't want any data
 

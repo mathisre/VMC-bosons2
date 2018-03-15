@@ -41,7 +41,7 @@ public:
 
 private:
     int     m_numberOfMetropolisSteps  = 0;
-    int     m_stepNumber               = 0;
+    double     m_stepNumber               = 0;
     int     m_acceptedNumber           = 0;
     double  m_energy                   = 0;
     double  m_energySquared            = 0;
