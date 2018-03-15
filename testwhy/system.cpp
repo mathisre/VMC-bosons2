@@ -4,14 +4,13 @@
 #include <vector>
 #include "sampler.h"
 #include "particle.h"
-#include "WaveFunctions/wavefunction.h"
+#include "WaveFunctions/simplegaussian.h"
 #include "Hamiltonians/hamiltonian.h"
 #include "InitialStates/initialstate.h"
 #include "Math/random.h"
 #include <iostream>
 #include <fstream>
 #include <time.h>
-#include "conjugategradient.h"
 
 using namespace std;
 
@@ -31,8 +30,8 @@ bool System::metropolisStep() {
     vector <double> QuantumForce = m_waveFunction->QuantumForce(m_particles);
 
     for(int d = 0 ; d < m_numberOfDimensions;d++){
-        r_new[d] = r_old[d] + m_stepLength*(Random::nextDouble()-0.5);
-        //r_new[d] = r_old[d] +  0.5 * QuantumForce[d]*m_timeStep +  m_sqrtTimeStep*(Random::nextDouble()-0.5);
+        //r_new[d] = r_old[d] + m_stepLength*(Random::nextDouble()-0.5);
+        r_new[d] = r_old[d] +  0.5 * QuantumForce[d]*m_timeStep +  m_sqrtTimeStep*(Random::nextDouble()-0.5);
     }
     m_particles.at(randparticle).setPosition(r_new);
     double psi_new=m_waveFunction->evaluate(m_particles);
@@ -74,9 +73,9 @@ void System::runMetropolisSteps(int numberOfMetropolisSteps) {
 
 }
 
-void System::runConjugateGradient(){
-    m_conjugateGradient->conjugateGradientSteps();
-}
+//void System::runConjugateGradient(){
+//    m_conjugateGradient->conjugateGradientSteps();
+//}
 
 void System::printOut()
 {
@@ -92,6 +91,24 @@ double System::computedistance(int i){
         temp+=m_particles.at(i).getPosition()[j]*m_particles.at(i).getPosition()[j];
     }
     return sqrt(temp);
+}
+
+double System::findEnergyDerivative(double CJsteps)
+{
+
+    double meanEnergy      = getSampler()->getEnergy() / CJsteps;
+    double meanWFderiv     = getSampler()->getWFderiv() / CJsteps;
+    double meanWFderivEloc = getSampler()->getWFderivMultELoc() / CJsteps;
+
+
+
+
+    // Make the sampler sample the wavefunc deriv and things like that
+    // Then just find the mean and we are good
+//cout<<meanWFderivEloc<<"meanwfderiveloc"<<endl;
+//cout<<-meanEnergy*meanWFderiv<<"other"<<endl;
+//if(2 * (meanWFderivEloc - meanEnergy*meanWFderiv)<0) return -2 * (meanWFderivEloc - meanEnergy*meanWFderiv);
+ return 2 * (meanWFderivEloc - meanEnergy*meanWFderiv);
 }
 
 /*

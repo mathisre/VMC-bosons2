@@ -18,6 +18,7 @@ public:
     void runConjugateGradient       ();
     void openDataFile               (std::string filename);
     void printOut                   ();
+    double findEnergyDerivative(double CJsteps);
     double computedistance          (int i);
     double computedistanceABS       (int i, int j);
    std::vector<std::vector<double>>    computematrixdistance(std::vector<class Particle> &particles);

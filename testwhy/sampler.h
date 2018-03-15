@@ -36,6 +36,9 @@ public:
 
     void setStepNumber(int stepNumber);
 
+    double getCumulativeEnergy() const;
+    void setCumulativeEnergy(double cumulativeEnergy);
+
 private:
     int     m_numberOfMetropolisSteps  = 0;
     int     m_stepNumber               = 0;
