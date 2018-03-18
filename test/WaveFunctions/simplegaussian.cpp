@@ -127,8 +127,7 @@ double SimpleGaussian::computeDoubleDerivative(std::vector<class Particle>& part
                 //if(a==0) second =0, fourth = 0, third = 0;
                 //else {
 
-                R_kj = m_system->computedistanceABS(k,j);
-                temp4 = a / (R_kj * (R_kj - a));
+                temp4 = a / (m_system->getDistanceMatrix()[k][j] * (m_system->getDistanceMatrix()[k][j] - a));
                 fourth -= temp4*temp4;
 
                 for (int d = 0; d < m_system->getNumberOfDimensions(); d++){
@@ -140,8 +139,7 @@ double SimpleGaussian::computeDoubleDerivative(std::vector<class Particle>& part
                 second += temp6 * temp4;
                 //temp *= 4*temp4;
 
-                R_ki = m_system->computedistanceABS(k,i);
-                third += temp4 * a / (R_ki * (R_ki  - a));
+                third += temp4 * a / (m_system->getDistanceMatrix()[k][i] * (m_system->getDistanceMatrix()[k][i]  - a));
                 //temp3 += a*a / (R_kj * R_ki * (R_kj  - a) * (R_ki -a));
 
 
@@ -261,14 +259,17 @@ std::vector<double> SimpleGaussian::QuantumForce(std::vector<class Particle>& pa
 
     double a = 0;
     double constant;
+    double R_ki;
 
     std::vector<double> QuantumForce(3);
     std::vector<double> u_deriv(3);
     for (int k = 0; k < m_system->getNumberOfParticles(); k++){
 
         for (int j = 0; j < k; j++){
-                constant = 2*a / (m_system->getDistanceMatrix()[k][j]*m_system->getDistanceMatrix()[k][j]
-                                *(m_system->getDistanceMatrix()[k][j]-a));
+                R_ki = m_system->getDistanceMatrix()[k][j];
+//constant = 2*a / (m_system->getDistanceMatrix()[k][j]*m_system->getDistanceMatrix()[k][j]
+  //                              *(m_system->getDistanceMatrix()[k][j]-a));
+                constant = 2*a / (R_ki*R_ki*(R_ki-a));
                 for (int d = 0; d < m_system->getNumberOfDimensions(); d++){
                     u_deriv[d] += (particles.at(k).getPosition()[d] - particles.at(j).getPosition()[d]) * constant;
                 }

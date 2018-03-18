@@ -28,7 +28,7 @@ bool System::metropolisStep() {
     vector <double> r_new(m_numberOfDimensions);
     vector <double> QuantumForce = m_waveFunction->QuantumForce(m_particles);
 
-    for(int d = 0 ; d < m_numberOfDimensions;d++){
+    for(int d = 0; d < m_numberOfDimensions; d++){
         //r_new[d] = r_old[d] + m_stepLength*(Random::nextDouble()-0.5);
         //r_new[d] = r_old[d] +  0.5 * QuantumForce[d]*m_timeStep +  m_sqrtTimeStep*(Random::nextDouble()-0.5);
 
@@ -40,7 +40,7 @@ bool System::metropolisStep() {
     double random_number=Random::nextDouble();
 
     if (random_number <= psi_new * psi_new / (psi_old * psi_old)){
-        setDistanceMatrix(computematrixdistance(m_particles));
+        updateDistanceMatrix(randparticle);
         return true;
     }
     else m_particles.at(randparticle).setPosition(r_old); return false;
@@ -53,6 +53,7 @@ void System::runMetropolisSteps(int numberOfMetropolisSteps) {
     getSampler()->setStepNumber(0);
     getSampler()->setAcceptedNumber(0);
     m_sampler->setNumberOfMetropolisSteps(numberOfMetropolisSteps);
+
     setDistanceMatrix(computematrixdistance(m_particles));
 
 
@@ -97,28 +98,42 @@ double System::computedistance(int i){
     return sqrt(temp);
 }
 
+void System::updateDistanceMatrix(int randparticle){
+    double temp = 0;
+    for (int j = 0; j < randparticle; j++){
+        temp = 0;
+        for (int d = 0; d < m_numberOfDimensions; d++){
+            temp += (m_particles.at(randparticle).getPosition()[d] - m_particles.at(j).getPosition()[d]) *
+                    (m_particles.at(randparticle).getPosition()[d] - m_particles.at(j).getPosition()[d]);
+        }
+        m_distanceMatrix[randparticle][j] = sqrt(temp);
+        m_distanceMatrix[j][randparticle] = m_distanceMatrix[randparticle][j];
+    }
+}
 
 std::vector<vector<double>> System::computematrixdistance(std::vector<class Particle> &particles){
-    vector<vector<double>> distancematrix(m_numberOfParticles, vector<double>(m_numberOfParticles));
 
+    vector<vector<double>> distancematrix(m_numberOfParticles, vector<double>(m_numberOfParticles));
     double temp=0;
     int j=0;
-    while(j<m_numberOfParticles){
-        for(int i=0; i<j; i++){
+    while(j < m_numberOfParticles){
+
+        temp = 0;
+
+        for(int i = 0; i < j; i++){
+
             for(int k=0;k<m_numberOfDimensions;k++){
                 temp+=(m_particles.at(i).getPosition()[k] - m_particles.at(j).getPosition()[k]) *
                       (m_particles.at(i).getPosition()[k] - m_particles.at(j).getPosition()[k]);
             }
             distancematrix[i][j]=sqrt(temp);
-            j++;
-        }
-    }
-    while(j<m_numberOfParticles){
-        for(int i=0; i<j; i++){
             distancematrix[j][i]=distancematrix[i][j];
-            j++;
         }
+
+        j++;
     }
+
+
     return distancematrix;
 }
 

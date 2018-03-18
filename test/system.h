@@ -41,6 +41,7 @@ public:
 
     std::vector<std::vector<double> > getDistanceMatrix() const;
     void setDistanceMatrix(const std::vector<std::vector<double> > &distanceMatrix);
+    void updateDistanceMatrix(int randparticle);
 
 private:
     int                             m_numberOfParticles = 0;
