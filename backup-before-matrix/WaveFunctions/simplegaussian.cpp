@@ -117,7 +117,7 @@ double SimpleGaussian::computeDoubleDerivative(std::vector<class Particle>& part
             //temp5 -= m_parameters[d]*particles.at(k).getPosition()[d];
         }
     }
-    if(a == 0) return first;
+    if(a==0) return first;
     int i=0;
     int j=0;
     while(i<m_system->getNumberOfParticles()){
@@ -260,6 +260,7 @@ double SimpleGaussian::computeDoubleDerivative(std::vector<class Particle>& part
 std::vector<double> SimpleGaussian::QuantumForce(std::vector<class Particle>& particles) {
 
     double a = 0;
+    double R_kj;
     double constant;
 
     std::vector<double> QuantumForce(3);
@@ -267,8 +268,8 @@ std::vector<double> SimpleGaussian::QuantumForce(std::vector<class Particle>& pa
     for (int k = 0; k < m_system->getNumberOfParticles(); k++){
 
         for (int j = 0; j < k; j++){
-                constant = 2*a / (m_system->getDistanceMatrix()[k][j]*m_system->getDistanceMatrix()[k][j]
-                                *(m_system->getDistanceMatrix()[k][j]-a));
+                R_kj = m_system->computedistanceABS(k,j);
+                constant = a / (R_kj*R_kj*(R_kj-a));
                 for (int d = 0; d < m_system->getNumberOfDimensions(); d++){
                     u_deriv[d] += (particles.at(k).getPosition()[d] - particles.at(j).getPosition()[d]) * constant;
                 }

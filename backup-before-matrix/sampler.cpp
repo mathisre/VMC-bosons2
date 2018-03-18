@@ -43,13 +43,11 @@ void Sampler::sample(bool acceptedStep) {
         }
         m_WFderivMultELoc = m_WFderiv * m_energy;
     }
-    if ((double)getStepNumber()/getNumberOfMetropolisSteps() >= 1.0 - m_system->getEquilibrationFraction()){
+    m_cumulativeEnergy          += m_energy;
+    m_cumulativeEnergySquared   += m_energy*m_energy;
+    m_cumulativeWFderiv         += m_WFderiv;
+    m_cumulativeWFderivMultEloc += m_WFderivMultELoc;
 
-        m_cumulativeEnergy          += m_energy;
-        m_cumulativeEnergySquared   += m_energy*m_energy;
-        m_cumulativeWFderiv         += m_WFderiv;
-        m_cumulativeWFderivMultEloc += m_WFderivMultELoc;
-    }
     //cout<<m_cumulativeEnergy<<endl;
     m_stepNumber++;
 }
@@ -93,8 +91,8 @@ void Sampler::computeAverages() {
 //    m_cumulativeEnergySquared /=(m_system->getNumberOfMetropolisSteps()*(1.0-m_system->getEquilibrationFraction()));*/
 
 
-    m_energy = m_cumulativeEnergy / (m_system->getNumberOfMetropolisSteps()*m_system->getEquilibrationFraction());
-    m_cumulativeEnergySquared /= m_system->getNumberOfMetropolisSteps()*m_system->getEquilibrationFraction();
+    m_energy = m_cumulativeEnergy / m_system->getNumberOfMetropolisSteps();
+    m_cumulativeEnergySquared /= m_system->getNumberOfMetropolisSteps();
     cout << m_cumulativeEnergySquared << endl;
     cout << m_energy << endl;
 }

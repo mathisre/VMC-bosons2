@@ -39,9 +39,7 @@ public:
     double getSqrtTimeStep() const;
     void setSqrtTimeStep(double sqrtTimeStep);
 
-    std::vector<std::vector<double> > getDistanceMatrix() const;
-    void setDistanceMatrix(const std::vector<std::vector<double> > &distanceMatrix);
-
+    
 private:
     int                             m_numberOfParticles = 0;
     int                             m_numberOfDimensions = 0;
@@ -58,6 +56,5 @@ private:
     class conjugateGradient*        m_conjugateGradient = nullptr;
     //class Random*                   m_random = nullptr;
     std::vector<class Particle>     m_particles = std::vector<class Particle>();
-    std::vector<std::vector<double>>     m_distanceMatrix = std::vector<std::vector<double>>();
 };
 

@@ -40,7 +40,6 @@ bool System::metropolisStep() {
     double random_number=Random::nextDouble();
 
     if (random_number <= psi_new * psi_new / (psi_old * psi_old)){
-        setDistanceMatrix(computematrixdistance(m_particles));
         return true;
     }
     else m_particles.at(randparticle).setPosition(r_old); return false;
@@ -53,7 +52,6 @@ void System::runMetropolisSteps(int numberOfMetropolisSteps) {
     getSampler()->setStepNumber(0);
     getSampler()->setAcceptedNumber(0);
     m_sampler->setNumberOfMetropolisSteps(numberOfMetropolisSteps);
-    setDistanceMatrix(computematrixdistance(m_particles));
 
 
     for (int i=0; i < numberOfMetropolisSteps; i++) {
@@ -168,15 +166,6 @@ void System::setSqrtTimeStep(double sqrtTimeStep)
     m_sqrtTimeStep = sqrtTimeStep;
 }
 
-std::vector<vector<double> > System::getDistanceMatrix() const
-{
-    return m_distanceMatrix;
-}
-
-void System::setDistanceMatrix(const std::vector<vector<double> > &distanceMatrix)
-{
-    m_distanceMatrix = distanceMatrix;
-}
 
 
 void System::setNumberOfParticles(int numberOfParticles) {
