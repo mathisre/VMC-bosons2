@@ -35,11 +35,11 @@ int main(int argc, char* argv[]){
 
     int numberOfParticles   = 3;
     int numberOfDimensions  = 2;
+    double timeStep         = 0.001;        // Importance sampling time step
 
     int numberOfSteps       = (int) 1e6;
     double omega            = 1.0;          // Oscillator frequency.
     double omega_z          = 1.0;          // Oscillator frequency z-direction
-    double timeStep         = 0.001;        // Importance sampling time step
 
     double a_ho             = 1-2e-4;
     double alpha            = 1.0/(2.0);    //*a_ho*a_ho);          // Variational parameter.
@@ -48,16 +48,12 @@ int main(int argc, char* argv[]){
     double stepLength       = 1.0;          // Metropolis step length.
     double equilibration    = 0.7;          // Amount of the total steps used for equilibration.
 
-    string filename         = "energy_"+to_string(numberOfDimensions) + "dim_" + to_string(numberOfParticles) + "particles.dat";          // Set equal to "0" if you don't want any data
-
-
+    string filename         = "energy_"+to_string(numberOfDimensions) + "dim_" + to_string(numberOfParticles) + "particles.dat";
+    // Set filename to "0" to stop from writing to file
 
     System* system = new System();
-
     system->setHamiltonian              (new HarmonicOscillator(system, omega, omega_z));
-
     system->setWaveFunction             (new SimpleGaussian(system, alpha, beta));
-
     system->setInitialState             (new RandomUniform(system, numberOfDimensions, numberOfParticles, trapSize, timeStep));
     system->openDataFile                (filename);
     system->setEquilibrationFraction    (equilibration);
