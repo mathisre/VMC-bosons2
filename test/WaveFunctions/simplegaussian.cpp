@@ -18,8 +18,9 @@ SimpleGaussian::SimpleGaussian(System* system, double alpha, double beta) :
     m_numberOfParameters = 3;
     m_parameters.reserve(3);
     m_parameters.push_back(alpha);
-    m_parameters.push_back(alpha);
+    m_parameters.push_back(alpha); // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     m_parameters.push_back(alpha*beta);
+    //m_parameters.push_back(beta);
 }
 
 double SimpleGaussian::evaluate(std::vector<class Particle> &particles) {
@@ -31,23 +32,85 @@ double SimpleGaussian::evaluate(std::vector<class Particle> &particles) {
      * (only) variational parameter.
      */
     double r_squared = 0;
-    double temp2=0;
-    double u=0;
-    double f=0;
-    double trap_size_sqr = m_system->getTrapSize()*m_system->getTrapSize();
+    double f=1;
+//    double trap_size_sqr = m_system->getTrapSize()*m_system->getTrapSize();
+//    double trap_size= m_system->getTrapSize();
+//double a=0;
 
+for(int j=0; j<m_system->getNumberOfParticles();j++){
+    if(m_system->getNumberOfParticles()==1) break;
+    for(int i=0; i<j; i++){
+        if(m_system->getDistanceMatrix()[i][j]<= m_system->getTrapSize()) f=0;
+        else f=1-m_system->getTrapSize()/(m_system->getDistanceMatrix()[i][j]);
+    }
+}
 
-    for(int i=0;i < m_system->getNumberOfParticles();i++){
+for(int i=0;i < m_system->getNumberOfParticles();i++){
 
         for(int d=0; d < m_system->getNumberOfDimensions();d++){
-            r_squared += particles.at(i).getPosition()[d]*particles.at(i).getPosition()[d];
-            int k=0;
-            while (i < k && k < m_system->getNumberOfParticles()){
-                temp2 +=  (particles.at(i).getPosition()[d] - particles.at(k).getPosition()[d])
-                        * (particles.at(i).getPosition()[d] - particles.at(k).getPosition()[d]);
-                k++;
-            }
-        }/*
+            r_squared += particles.at(i).getPosition()[d]*particles.at(i).getPosition()[d]*m_parameters[d];
+                  }
+}
+
+return exp(-r_squared)*f;
+
+//if(m_system->getNumberOfDimensions()==1){
+//    for(int i=0;i < m_system->getNumberOfParticles();i++){
+//            r_squared += particles.at(i).getPosition()[0]*particles.at(i).getPosition()[0];
+//    }
+
+//    return exp(-m_parameters[0]*r_squared+u);
+
+//}
+
+//if(m_system->getNumberOfDimensions()==2){
+//    for(int i=0;i < m_system->getNumberOfParticles();i++){
+//            r_squared += particles.at(i).getPosition()[0]*particles.at(i).getPosition()[0]+particles.at(i).getPosition()[1]*particles.at(i).getPosition()[1];
+//    }
+//    return exp(-m_parameters[0]*r_squared+u);
+
+//}
+
+//if(m_system->getNumberOfDimensions()==3){
+//    for(int i=0;i < m_system->getNumberOfParticles();i++){
+//            r_squared += particles.at(i).getPosition()[0]*particles.at(i).getPosition()[0]+particles.at(i).getPosition()[1]*particles.at(i).getPosition()[1]+
+//                    m_parameters[2]*particles.at(i).getPosition()[2]*particles.at(i).getPosition()[2]/m_parameters[0];
+//    }
+//    return exp(-m_parameters[0]*r_squared)*f;
+
+//}
+
+}
+
+
+
+//        for(int j=0; j<m_system->getNumberOfParticles();j++){
+//            for(int i=0; i<j; i++){
+//                if(m_system->computedistanceABS(i,j)<= m_system->getTrapSize()) f=0;
+//                else f=1-m_system->getTrapSize()/(m_system->computedistanceABS(i,j));
+//                u+=log(f);
+//            }
+//        }
+
+
+
+
+
+
+//for(int i=0;i < m_system->getNumberOfParticles();i++){
+
+//        for(int d=0; d < m_system->getNumberOfDimensions();d++){
+//            r_squared += particles.at(i).getPosition()[d]*particles.at(i).getPosition()[d];
+//                  }
+//}
+
+
+//            while (i < k && k < m_system->getNumberOfParticles()){
+//                temp2 +=  (particles.at(i).getPosition()[d] - particles.at(k).getPosition()[d])
+//                        * (particles.at(i).getPosition()[d] - particles.at(k).getPosition()[d]);
+//                k++;
+//            }
+        /*
         if(r_squared <= trap_size_sqr) f = 0;
         else f = 1 - m_system->getTrapSize() / (sqrt(r_squared));
         u += log(f);
@@ -58,18 +121,19 @@ double SimpleGaussian::evaluate(std::vector<class Particle> &particles) {
         else f = 1 - m_system->getTrapSize() / (r_abs);
         u+=log(f);
         */
-    }
 
 
-    //    for(int j=0; j<m_system->getNumberOfParticles();j++){
-    //        for(int i=0; i<j; i++){
-    //            if(m_system->computedistanceABS(i,j)) f=0;
-    //            else f=1-a/(m_system->computedistanceABS(i,j));
-    //            u+=log(f);
-    //        }
-    //    }
-    return exp(-m_parameters[0]*r_squared+u);
-}
+//        for(int j=0; j<m_system->getNumberOfParticles();j++){
+//            for(int i=0; i<j; i++){
+//                if(m_system->computedistanceABS(i,j)) f=0;
+//                else f=1-a/(m_system->computedistanceABS(i,j));
+//                u+=log(f);
+//            }
+//        }
+//    return exp(-m_parameters[0]*r_squared+u);
+
+//}
+
 
 double SimpleGaussian::computeDoubleDerivative(std::vector<class Particle>& particles) {
     /* All wave functions need to implement this function, so you need to
@@ -101,8 +165,6 @@ double SimpleGaussian::computeDoubleDerivative(std::vector<class Particle>& part
     double temp4= 0;
     //double temp5 = 0;
     double temp6 = 0;
-    double R_kj = 0;
-    double R_ki = 0;
     vector <double> m_parameters_squared(3);
 
     transform(m_parameters.begin(),m_parameters.end(),m_parameters.begin(),  std::bind1st (std::multiplies <double> () , 2.0));
@@ -259,17 +321,17 @@ std::vector<double> SimpleGaussian::QuantumForce(std::vector<class Particle>& pa
 
     double a = 0;
     double constant;
-    double R_ki;
+    double R_kj;
 
     std::vector<double> QuantumForce(3);
     std::vector<double> u_deriv(3);
     for (int k = 0; k < m_system->getNumberOfParticles(); k++){
 
         for (int j = 0; j < k; j++){
-                R_ki = m_system->getDistanceMatrix()[k][j];
+                R_kj = m_system->getDistanceMatrix()[k][j];
 //constant = 2*a / (m_system->getDistanceMatrix()[k][j]*m_system->getDistanceMatrix()[k][j]
   //                              *(m_system->getDistanceMatrix()[k][j]-a));
-                constant = 2*a / (R_ki*R_ki*(R_ki-a));
+                constant = 2*a / (R_kj*R_kj*(R_kj-a));
                 for (int d = 0; d < m_system->getNumberOfDimensions(); d++){
                     u_deriv[d] += (particles.at(k).getPosition()[d] - particles.at(j).getPosition()[d]) * constant;
                 }
@@ -278,6 +340,7 @@ std::vector<double> SimpleGaussian::QuantumForce(std::vector<class Particle>& pa
         for (int d = 0; d < m_system->getNumberOfDimensions(); d++){
             QuantumForce[d] += -2 * (m_parameters[d]*particles.at(k).getPosition()[d])
                                + u_deriv[d];
+
         }
     }
 

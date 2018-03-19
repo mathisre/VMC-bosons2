@@ -35,21 +35,21 @@ void Sampler::sample(bool acceptedStep) {
         m_acceptedNumber++;
         m_energy = m_system->getHamiltonian()->
                    computeLocalEnergy(m_system->getParticles());
-        for (int i = 0; i < m_system->getNumberOfDimensions(); i++){
-            for (int d = 0; d < m_system->getNumberOfParticles(); d++){
+        for (int i = 0; i < m_system->getNumberOfParticles(); i++){
+            for (int d = 0; d < m_system->getNumberOfDimensions(); d++){
                 m_WFderiv -= m_system->getParticles().at(i).getPosition()[d] * m_system->getParticles().at(i).getPosition()[d];
                 //Remember to include (1,1,beta) vector
             }
         }
         m_WFderivMultELoc = m_WFderiv * m_energy;
     }
-    if ((double)getStepNumber()/getNumberOfMetropolisSteps() >= 1.0 - m_system->getEquilibrationFraction()){
+     if (((double)getStepNumber()/getNumberOfMetropolisSteps() > 1.0 - m_system->getEquilibrationFraction())||fabs((double)getStepNumber()/getNumberOfMetropolisSteps() -( 1.0 - m_system->getEquilibrationFraction()))<1e-10){
 
         m_cumulativeEnergy          += m_energy;
         m_cumulativeEnergySquared   += m_energy*m_energy;
         m_cumulativeWFderiv         += m_WFderiv;
         m_cumulativeWFderivMultEloc += m_WFderivMultELoc;
-    }
+}
     //cout<<m_cumulativeEnergy<<endl;
     m_stepNumber++;
 }
