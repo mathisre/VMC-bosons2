@@ -38,9 +38,12 @@ def block(x):
     return ans
 
 # input data must be a power of two
-x = loadtxt(argv[1])
-x = x[int(0.75*len(x)):len(x)]
+#x = loadtxt(argv[1])
+#x = x[int(0.75*len(x)):len(x)]
 eq = 0.25
+
+
+x = loadtxt("/home/mathisre/Dropbox/Programs/VMC-bosons2/with_MPI/ground_state_0.dat")
 
 x0 = loadtxt("/home/mathisre/Dropbox/Programs/VMC-bosons2/with_MPI/ground_state_0.dat")
 x1 = loadtxt("/home/mathisre/Dropbox/Programs/VMC-bosons2/with_MPI/ground_state_1.dat")
@@ -51,9 +54,15 @@ x0 = x0[int((1-eq)*len(x)):len(x)]
 x1 = x1[int((1-eq)*len(x)):len(x)]
 x2 = x2[int((1-eq)*len(x)):len(x)]
 x3 = x3[int((1-eq)*len(x)):len(x)]
+print len(x)
 
 x5 = append(x0,x1)
 x4 = append(x2,x3)
 x = append(x5,x4)
 
+x = loadtxt("/home/mathisre/Dropbox/Programs/VMC-bosons2/build-no-matr-Desktop_Qt_5_10_1_GCC_64bit-Release/energy.dat")
+x = x[2*10**6-2**20:2*10**6]
 ans = block(x)
+
+
+
