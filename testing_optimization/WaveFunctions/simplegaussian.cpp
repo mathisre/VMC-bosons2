@@ -24,23 +24,14 @@ SimpleGaussian::SimpleGaussian(System* system, double alpha, double beta) :
 }
 
 double SimpleGaussian::evaluate(std::vector<class Particle> &particles) {
-    /* You need to implement a Gaussian wave function here. The positions of
-     * the particles are accessible through the particle[i].getPosition()
-     * function.
-     *
-     * For the actual expression, use exp(-alpha * r^2), with alpha being the
-     * (only) variational parameter.
-     */
+
     double r_squared = 0;
     double f=1;
-//    double trap_size_sqr = m_system->getTrapSize()*m_system->getTrapSize();
-//    double trap_size= m_system->getTrapSize();
-//double a=0;
-//Save psi_new and set to psi_old
-for(int j=0; j<m_system->getNumberOfParticles();j++){
-    if(m_system->getNumberOfParticles()==1) break;
-    for(int i=0; i<j; i++){
-        f = 1-m_system->getTrapSize()/(m_system->getDistanceMatrixij(i,j));
+
+    for(int j=0; j<m_system->getNumberOfParticles();j++){
+        if(m_system->getNumberOfParticles()==1) break;
+        for(int i=0; i<j; i++){
+            f = 1-m_system->getTrapSize()/(m_system->getDistanceMatrixij(i,j));
     }
 }
 
@@ -329,8 +320,6 @@ std::vector<double> SimpleGaussian::QuantumForce(std::vector<class Particle>& pa
 
         for (int j = 0; j < k; j++){
                 R_kj = m_system->getDistanceMatrixij(k,j);
-//constant = 2*a / (m_system->getDistanceMatrix()[k][j]*m_system->getDistanceMatrix()[k][j]
-  //                              *(m_system->getDistanceMatrix()[k][j]-a));
                 constant = 2*a / (R_kj*R_kj*(R_kj-a));
                 for (int d = 0; d < m_system->getNumberOfDimensions(); d++){
                     u_deriv[d] += (particles.at(k).getPosition()[d] - particles.at(j).getPosition()[d]) * constant;
