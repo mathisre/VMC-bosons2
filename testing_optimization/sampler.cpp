@@ -28,6 +28,7 @@ void Sampler::sample(bool acceptedStep) {
         m_cumulativeEnergy = 0;
     }
     if (acceptedStep==true){
+        // Sampling of energy moved to metropolisstep
         m_acceptedNumber++;
         m_WFderiv = 0;
         for (int i = 0; i < m_system->getNumberOfParticles(); i++){
