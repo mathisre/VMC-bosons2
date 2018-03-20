@@ -33,7 +33,7 @@ int main(int argc, char* argv[]){
 
 
 
-    int numberOfParticles   = 10;
+    int numberOfParticles   = ;
     int numberOfDimensions  = 3;
     double timeStep         = 0.001;        // Importance sampling time step
 
