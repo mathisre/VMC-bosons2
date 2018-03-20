@@ -41,7 +41,7 @@ double HarmonicOscillator::computeLocalEnergy(std::vector<Particle> &particles) 
 
     }
     potentialEnergy *= 0.5;
-    //cout<<"Potential energy = "<<potentialEnergy;
+
     //cout<<"Kinetic energy = "<<kineticEnergy<<endl;
     return kineticEnergy + potentialEnergy;
 }
@@ -64,6 +64,8 @@ double HarmonicOscillator::LocalEnergySingleParticle(std::vector<Particle> &part
 
 
     potentialEnergy *= 0.5;
+
+    cout<<potentialEnergy<<"|||||||||"<<kineticEnergy<<endl;
     return kineticEnergy + potentialEnergy;
 }
 

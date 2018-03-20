@@ -46,7 +46,7 @@ int main(int argc, char* argv[]){
     double a_ho             = 1.5e-4;
     double alpha            = 1.0/(2.0);    //*a_ho*a_ho);          // Variational parameter.
     double beta             = 2.82843;            // beta
-    double interactionSize   = 0.0043;            // trap size
+    double interactionSize   =0.0043;            // trap size
     double stepLength       = 1.0;          // Metropolis step length.
     double equilibration    = 0.7;          // Amount of the total steps used for equilibration.
 

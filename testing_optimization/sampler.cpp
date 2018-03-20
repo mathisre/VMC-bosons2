@@ -42,6 +42,8 @@ void Sampler::sample(bool acceptedStep) {
         }
         m_WFderivMultELoc = m_WFderiv * m_energy;
     }
+
+    //cout<<m_energy<<endl;
      if (((double)getStepNumber()/getNumberOfMetropolisSteps() > 1.0 - m_system->getEquilibrationFraction())||fabs((double)getStepNumber()/getNumberOfMetropolisSteps() -( 1.0 - m_system->getEquilibrationFraction()))<1e-10){
 
         m_cumulativeEnergy          += m_energy;

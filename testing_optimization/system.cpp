@@ -61,6 +61,7 @@ void System::runMetropolisSteps(int numberOfMetropolisSteps) {
     m_particles                 = m_initialState->getParticles();
     m_sampler                   = new Sampler(this);
     m_numberOfMetropolisSteps   = numberOfMetropolisSteps;
+    //cout<<getSampler()->getEnergy()<<endl;
     getSampler()->setStepNumber(0);
     getSampler()->setAcceptedNumber(0);
     m_sampler->setNumberOfMetropolisSteps(numberOfMetropolisSteps);
