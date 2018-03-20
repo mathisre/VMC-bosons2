@@ -33,8 +33,9 @@ bool System::metropolisStep() {
     m_particles.at(randparticle).setPosition(r_new);
     bool bosonsTooClose = updateDistanceMatrix(m_particles, randparticle);
     if ( bosonsTooClose == true){ // Then don't accept
-        m_particles.at(randparticle).setPosition(r_new);
-        cout << "hello " << endl;
+        m_particles.at(randparticle).setPosition(r_old);
+        updateDistanceMatrix(m_particles, randparticle);
+//        cout << "hello bosons" << endl;
         getSampler()->updateEnergy(getHamiltonian()->LocalEnergySingleParticle(m_particles, randparticle));
         updateQuantumForce(m_waveFunction->QuantumForceSingleParticle(m_particles, randparticle), false);
         return false;
@@ -112,6 +113,19 @@ bool System::updateDistanceMatrix( std::vector<class Particle> &particles, int r
             return true;
         }
         m_distanceMatrix[j][randparticle] = m_distanceMatrix[randparticle][j];
+    }
+    for (int j = randparticle+1; j < m_numberOfParticles; j++){
+        temp = 0;
+        for (int d = 0; d < m_numberOfDimensions; d++){
+            temp += (particles.at(randparticle).getPosition()[d] - particles.at(j).getPosition()[d]) *
+                    (particles.at(randparticle).getPosition()[d] - particles.at(j).getPosition()[d]);
+        }
+        m_distanceMatrix[randparticle][j] = sqrt(temp);
+        if (m_distanceMatrix[randparticle][j] < getinteractionSize()){
+            return true;
+        }
+        m_distanceMatrix[j][randparticle] = m_distanceMatrix[randparticle][j];
+
     }
     return false;
 }
