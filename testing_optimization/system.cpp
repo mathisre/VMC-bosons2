@@ -107,7 +107,7 @@ bool System::updateDistanceMatrix( std::vector<class Particle> &particles, int r
                     (particles.at(randparticle).getPosition()[d] - particles.at(j).getPosition()[d]);
         }
         m_distanceMatrix[randparticle][j] = sqrt(temp);
-        if (m_distanceMatrix[randparticle][j] < getTrapSize()){
+        if (m_distanceMatrix[randparticle][j] < getinteractionSize()){
             return true;
         }
         m_distanceMatrix[j][randparticle] = m_distanceMatrix[randparticle][j];
@@ -167,14 +167,14 @@ void System::openDataFile(string filename){
     m_sampler->openDataFile(filename);
 }
 
-double System::getTrapSize() const
+double System::getinteractionSize() const
 {
-    return m_trapSize;
+    return m_interactionSize;
 }
 
-void System::setTrapSize(double trapSize)
+void System::setinteractionSize(double interactionSize)
 {
-    m_trapSize = trapSize;
+    m_interactionSize = interactionSize;
 }
 
 double System::getTimeStep() const

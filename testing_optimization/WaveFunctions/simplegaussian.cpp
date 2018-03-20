@@ -18,7 +18,7 @@ SimpleGaussian::SimpleGaussian(System* system, double alpha, double beta) :
     m_numberOfParameters = 3;
     m_parameters.reserve(3);
     m_parameters.push_back(alpha);
-    m_parameters.push_back(alpha); // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    m_parameters.push_back(alpha);
     m_parameters.push_back(alpha*beta);
     //m_parameters.push_back(beta);
 }
@@ -35,7 +35,7 @@ double SimpleGaussian::evaluate(std::vector<class Particle> &particles) {
 
         if(m_system->getNumberOfParticles()==1) break;
         for(int i=0; i<j; i++){
-            f = 1-m_system->getTrapSize()/(m_system->getDistanceMatrixij(i,j));
+            f = 1-m_system->getinteractionSize()/(m_system->getDistanceMatrixij(i,j));
     }
 }
 
@@ -80,8 +80,8 @@ return exp(-r_squared)*f;
 
 //        for(int j=0; j<m_system->getNumberOfParticles();j++){
 //            for(int i=0; i<j; i++){
-//                if(m_system->computedistanceABS(i,j)<= m_system->getTrapSize()) f=0;
-//                else f=1-m_system->getTrapSize()/(m_system->computedistanceABS(i,j));
+//                if(m_system->computedistanceABS(i,j)<= m_system->getinteractionSize()) f=0;
+//                else f=1-m_system->getinteractionSize()/(m_system->computedistanceABS(i,j));
 //                u+=log(f);
 //            }
 //        }
@@ -106,13 +106,13 @@ return exp(-r_squared)*f;
 //            }
         /*
         if(r_squared <= trap_size_sqr) f = 0;
-        else f = 1 - m_system->getTrapSize() / (sqrt(r_squared));
+        else f = 1 - m_system->getinteractionSize() / (sqrt(r_squared));
         u += log(f);
 */
         /*
         double r_abs=sqrt(temp);
-        if(r_abs <= m_system->getTrapSize()) f = 0;
-        else f = 1 - m_system->getTrapSize() / (r_abs);
+        if(r_abs <= m_system->getinteractionSize()) f = 0;
+        else f = 1 - m_system->getinteractionSize() / (r_abs);
         u+=log(f);
         */
 
@@ -343,7 +343,7 @@ std::vector<double> SimpleGaussian::QuantumForce(std::vector<class Particle>& pa
 
 std::vector<double> SimpleGaussian::QuantumForceSingleParticle(std::vector<class Particle>& particles, int singParticle) {
 
-    double a = m_system->getTrapSize();
+    double a = m_system->getinteractionSize();
     double R_kj;
     double constant;
 

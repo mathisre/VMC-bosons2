@@ -11,14 +11,14 @@ using std::endl;
 
 using namespace std;
 
-RandomUniform::RandomUniform(System* system, int numberOfDimensions, int numberOfParticles, double trapSize, double timeStep)  :
+RandomUniform::RandomUniform(System* system, int numberOfDimensions, int numberOfParticles, double interactionSize, double timeStep)  :
         InitialState(system) {
     assert(numberOfDimensions > 0 && numberOfParticles > 0);
     m_numberOfDimensions = numberOfDimensions;
     m_numberOfParticles  = numberOfParticles;
     m_system->setNumberOfDimensions(numberOfDimensions);
     m_system->setNumberOfParticles(numberOfParticles);
-    m_system->setTrapSize(trapSize);
+    m_system->setinteractionSize(interactionSize);
     m_system->setTimeStep(timeStep);
     m_system->setSqrtTimeStep(sqrt(timeStep));
 
@@ -56,7 +56,7 @@ void RandomUniform::setupInitialStateWithInteraction() {
                         (m_particles.at(k).getPosition()[d] - m_particles.at(i).getPosition()[d]);
             }
             R_ki = sqrt(R_ki);
-            if (R_ki < m_system->getTrapSize()){
+            if (R_ki < m_system->getinteractionSize()){
                 Particle p;
                 m_particles.push_back(p);
                 m_particles.at(i).setNumberOfDimensions(m_numberOfDimensions);

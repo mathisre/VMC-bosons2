@@ -30,8 +30,8 @@ public:
     int getNumberOfMetropolisSteps()    { return m_numberOfMetropolisSteps; }
     double getEquilibrationFraction()   { return m_equilibrationFraction; }
 
-    double getTrapSize() const;
-    void setTrapSize(double trapSize);
+    double getinteractionSize() const;
+    void setinteractionSize(double interactionSize);
 
     double getTimeStep() const;
     void setTimeStep(double timeStep);
@@ -58,7 +58,7 @@ private:
     double                          m_equilibrationFraction = 0;
     double                          m_psiOld = 0;
     double                          m_stepLength = 0.1;
-    double                          m_trapSize = 0;
+    double                          m_interactionSize = 0;
     double                          m_timeStep = 0;
     double                          m_sqrtTimeStep = 0;
 
