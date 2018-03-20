@@ -71,7 +71,8 @@ double Hamiltonian::computeNumericalDoubleDerivativeSingleParticle(std::vector<c
 
 
     present = m_system->getWaveFunction()->evaluate(particles);
-        for(int d=0; d < m_system->getNumberOfDimensions(); d++){
+
+    for(int d=0; d < m_system->getNumberOfDimensions(); d++){
             r[d]=particles.at(singParticle).getPosition()[d];
             r[d]-=h;
         }

@@ -33,8 +33,8 @@ int main(int argc, char* argv[]){
 
 
 
-    int numberOfParticles   = 3;
-    int numberOfDimensions  = 2;
+    int numberOfParticles   = 10;
+    int numberOfDimensions  = 3;
     double timeStep         = 0.001;        // Importance sampling time step
 
     int numberOfSteps       = (int) 1e6;
@@ -48,7 +48,7 @@ int main(int argc, char* argv[]){
     double stepLength       = 1.0;          // Metropolis step length.
     double equilibration    = 0.7;          // Amount of the total steps used for equilibration.
 
-    string filename         = "energy_"+to_string(numberOfDimensions) + "dim_" + to_string(numberOfParticles) + "particles.dat";
+    string filename         =            "energy_"+to_string(numberOfDimensions) + "dim_" + to_string(numberOfParticles) + "particles.dat";
     // Set filename to "0" to stop from writing to file
 
     System* system = new System();

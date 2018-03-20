@@ -25,10 +25,14 @@ SimpleGaussian::SimpleGaussian(System* system, double alpha, double beta) :
 
 double SimpleGaussian::evaluate(std::vector<class Particle> &particles) {
 
+    // WF is just the product of the individual wavefunctions
+    // Divide by the wf of the old particle and multiply in the wf of the new one
+
     double r_squared = 0;
     double f=1;
 
     for(int j=0; j<m_system->getNumberOfParticles();j++){
+
         if(m_system->getNumberOfParticles()==1) break;
         for(int i=0; i<j; i++){
             f = 1-m_system->getTrapSize()/(m_system->getDistanceMatrixij(i,j));
@@ -147,7 +151,8 @@ double SimpleGaussian::computeDoubleDerivative(std::vector<class Particle>& part
      *
      */
 
-    double first,second,third, fourth=0;
+    double first = 0;
+    double second = 0, third = 0, fourth=0;
     double a=0;
     //    double temp=0;
     //    double temp2=0;

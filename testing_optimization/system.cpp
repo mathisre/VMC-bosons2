@@ -23,7 +23,7 @@ bool System::metropolisStep() {
 
 
     for(int d = 0; d < m_numberOfDimensions; d++){
-       // r_new[d] = r_old[d] + m_stepLength*(Random::nextDouble()-0.5);
+//        r_new[d] = r_old[d] + m_stepLength*(Random::nextDouble()-0.5);
         r_new[d] = r_old[d] + m_QuantumForce[d]*m_timeStep +  m_sqrtTimeStep*(Random::nextDouble()-0.5);
     }
     // Remove energy and quantum force from that single particle and add back when either accept or decline move
@@ -66,9 +66,9 @@ void System::runMetropolisSteps(int numberOfMetropolisSteps) {
 
     // Initial values
     setDistanceMatrix(computematrixdistance(m_particles));
-    getSampler()->setEnergy(getHamiltonian()->computeLocalEnergy(getParticles()));
-    m_psiOld = m_waveFunction->evaluate(getParticles());
-    setQuantumForce(m_waveFunction->QuantumForce(getParticles()));
+    m_psiOld = m_waveFunction->evaluate(m_particles);
+    getSampler()->setEnergy(getHamiltonian()->computeLocalEnergy(m_particles));
+    setQuantumForce(m_waveFunction->QuantumForce(m_particles));
 
     for (int i=0; i < numberOfMetropolisSteps; i++) {
         bool acceptedStep = metropolisStep();

@@ -25,7 +25,10 @@ void Sampler::setNumberOfMetropolisSteps(int steps) {
 void Sampler::sample(bool acceptedStep) {
 
     if (m_stepNumber == 0) {
-        m_cumulativeEnergy = 0;
+        m_cumulativeEnergy          = 0;
+        m_cumulativeEnergySquared   = 0;
+        m_cumulativeWFderiv         = 0;
+        m_cumulativeWFderivMultEloc = 0;
     }
     if (acceptedStep==true){
         // Sampling of energy moved to metropolisstep
