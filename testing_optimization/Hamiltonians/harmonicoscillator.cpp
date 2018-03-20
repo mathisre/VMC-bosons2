@@ -27,11 +27,10 @@ double HarmonicOscillator::computeLocalEnergy(std::vector<Particle> &particles) 
 
 
 
-   // kineticEnergy = -0.5*m_system->getWaveFunction()->computeDoubleDerivative(particles);
-    kineticEnergy = -0.5*m_system->getHamiltonian()->computeNumericalDoubleDerivative(particles);
+    kineticEnergy = -0.5*m_system->getWaveFunction()->computeDoubleDerivative(particles);
+    //kineticEnergy = -0.5*m_system->getHamiltonian()->computeNumericalDoubleDerivative(particles);
 
 
-    //cout<<"Kinetic energy = "<<kineticEnergy<<endl;
 
     for (int k = 0; k < m_system->getNumberOfParticles(); k++ ){
         for (int d = 0; d < m_system->getNumberOfDimensions(); d++){
@@ -43,7 +42,7 @@ double HarmonicOscillator::computeLocalEnergy(std::vector<Particle> &particles) 
     }
     potentialEnergy *= 0.5;
     //cout<<"Potential energy = "<<potentialEnergy;
-    //cout << "\t kin" << kineticEnergy<<" \n";
+    //cout<<"Kinetic energy = "<<kineticEnergy<<endl;
     return kineticEnergy + potentialEnergy;
 }
 
@@ -53,8 +52,8 @@ double HarmonicOscillator::LocalEnergySingleParticle(std::vector<Particle> &part
     double potentialEnergy = 0;
     double kineticEnergy;
 
-    //kineticEnergy = -0.5*m_system->getWaveFunction()->computeDoubleDerivativeSingleParticle(particles, singParticle);
-    kineticEnergy = -0.5*m_system->getHamiltonian()->computeNumericalDoubleDerivativeSingleParticle(particles, singParticle);
+    kineticEnergy = -0.5*m_system->getWaveFunction()->computeDoubleDerivativeSingleParticle(particles, singParticle);
+    //kineticEnergy = -0.5*m_system->getHamiltonian()->computeNumericalDoubleDerivativeSingleParticle(particles, singParticle);
 
 
 

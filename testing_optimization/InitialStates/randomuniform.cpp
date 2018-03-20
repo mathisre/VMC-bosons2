@@ -32,6 +32,7 @@ void RandomUniform::setupInitialState() {
         for (int j=0; j < m_numberOfDimensions; j++) {
 
             position.push_back(Random::nextDouble()-0.5);
+
         }
         Particle p;
         m_particles.push_back(p);

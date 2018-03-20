@@ -33,18 +33,20 @@ int main(int argc, char* argv[]){
 
 
 
+
     int numberOfParticles   = 10;
     int numberOfDimensions  = 3;
     double timeStep         = 0.001;        // Importance sampling time step
 
-    int numberOfSteps       = (int) 1e6;
+    int numberOfSteps       = (int) 1e+6;
     double omega            = 1.0;          // Oscillator frequency.
-    double omega_z          = 1.0;          // Oscillator frequency z-direction
+    double omega_z          = sqrt(2.82843);     // Oscillator frequency z-direction
 
-    double a_ho             = 1-2e-4;
+
+    double a_ho             = 1.5e-4;
     double alpha            = 1.0/(2.0);    //*a_ho*a_ho);          // Variational parameter.
-    double beta             = 1;            // beta
-    double interactionSize         = 0;            // trap size
+    double beta             = 2.82843;            // beta
+    double interactionSize   = 0.0043;            // trap size
     double stepLength       = 1.0;          // Metropolis step length.
     double equilibration    = 0.7;          // Amount of the total steps used for equilibration.
 
@@ -53,8 +55,10 @@ int main(int argc, char* argv[]){
 
     System* system = new System();
     system->setHamiltonian              (new HarmonicOscillator(system, omega, omega_z));
+
     system->setWaveFunction             (new SimpleGaussian(system, alpha, beta));
     system->setInitialState             (new RandomUniform(system, numberOfDimensions, numberOfParticles, interactionSize, timeStep));
+
     system->openDataFile                (filename);
     system->setEquilibrationFraction    (equilibration);
     system->setStepLength               (stepLength);

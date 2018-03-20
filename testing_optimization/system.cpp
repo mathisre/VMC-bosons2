@@ -34,12 +34,13 @@ bool System::metropolisStep() {
     bool bosonsTooClose = updateDistanceMatrix(m_particles, randparticle);
     if ( bosonsTooClose == true){ // Then don't accept
         m_particles.at(randparticle).setPosition(r_new);
+        cout << "hello " << endl;
         getSampler()->updateEnergy(getHamiltonian()->LocalEnergySingleParticle(m_particles, randparticle));
         updateQuantumForce(m_waveFunction->QuantumForceSingleParticle(m_particles, randparticle), false);
         return false;
     }
-    double psi_new = m_waveFunction->evaluate(m_particles);
 
+    double psi_new = m_waveFunction->evaluate(m_particles);
     if (Random::nextDouble() <= psi_new * psi_new / (m_psiOld * m_psiOld)){ // Accept
         m_psiOld = psi_new;
         getSampler()->updateEnergy(getHamiltonian()->LocalEnergySingleParticle(m_particles, randparticle));
@@ -69,7 +70,6 @@ void System::runMetropolisSteps(int numberOfMetropolisSteps) {
     m_psiOld = m_waveFunction->evaluate(m_particles);
     getSampler()->setEnergy(getHamiltonian()->computeLocalEnergy(m_particles));
     setQuantumForce(m_waveFunction->QuantumForce(m_particles));
-cout<<getSampler()->getEnergy()<<endl;
     for (int i=0; i < numberOfMetropolisSteps; i++) {
         bool acceptedStep = metropolisStep();
             m_sampler->sample(acceptedStep);
