@@ -38,13 +38,13 @@ int main(int argc, char* argv[]){
     int numberOfDimensions  = 3;
     double timeStep         = 0.01;        // Importance sampling time step
 
-    int numberOfSteps       = (int) 1e+6;
+    int numberOfSteps       = (int) 1e+5;
     double omega            = 1.0;          // Oscillator frequency.
-    double omega_z          = sqrt(2.82843);     // Oscillator frequency z-direction
+    double omega_z          = 2.82843;     // Oscillator frequency z-direction
 
 
     double a_ho             = 1.5e-4;
-    double alpha            = 0.7;    //*a_ho*a_ho);          // Variational parameter.
+    double alpha            = 0.5;//0.775;    //*a_ho*a_ho);          // Variational parameter.
     double beta             = 2.82843;            // beta
     double interactionSize   =0.0043;            // trap size
     double stepLength       = 1.0;          // Metropolis step length.

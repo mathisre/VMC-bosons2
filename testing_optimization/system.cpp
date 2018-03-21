@@ -90,6 +90,7 @@ void System::runMetropolisSteps(int numberOfMetropolisSteps) {
     setDistanceMatrix(computematrixdistance(m_particles));
     m_psiOld = m_waveFunction->evaluate(m_particles);
     getSampler()->setEnergy(getHamiltonian()->computeLocalEnergy(m_particles));
+    cout<<getSampler()->getEnergy()<<endl;
     setQuantumForce(m_waveFunction->QuantumForce(m_particles));
     for (int i=0; i < numberOfMetropolisSteps; i++) {
         bool acceptedStep = metropolisStep();
