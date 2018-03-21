@@ -51,13 +51,13 @@ void RandomUniform::setupInitialStateWithInteraction() {
         for (int d=0; d < m_numberOfDimensions; d++) {
             position.push_back(Random::nextDouble()-0.5);
         }
-        for (int k = 0; k < placedParticles + 1; k++){
+        for (int k = 0; k < m_numberOfParticles; k++){
             for (int d=0; d < m_numberOfDimensions; d++) {
                 R_ki += (m_particles.at(k).getPosition()[d] - m_particles.at(i).getPosition()[d]) *
                         (m_particles.at(k).getPosition()[d] - m_particles.at(i).getPosition()[d]);
             }
             R_ki = sqrt(R_ki);
-            if (R_ki < m_system->getinteractionSize()){
+            //if (R_ki < m_system->getinteractionSize()){
                 Particle p;
                 m_particles.push_back(p);
                 m_particles.at(i).setNumberOfDimensions(m_numberOfDimensions);
@@ -66,7 +66,7 @@ void RandomUniform::setupInitialStateWithInteraction() {
                 distancematrix[k][i] = R_ki;
                 distancematrix[i][k] = R_ki;
                 placedParticles++;
-            }
+          //  }
         }
     }
     m_system->setDistanceMatrix(distancematrix);

@@ -36,7 +36,7 @@ int main(int argc, char* argv[]){
 
     int numberOfParticles   = 10;
     int numberOfDimensions  = 3;
-    double timeStep         = 0.001;        // Importance sampling time step
+    double timeStep         = 0.01;        // Importance sampling time step
 
     int numberOfSteps       = (int) 1e+6;
     double omega            = 1.0;          // Oscillator frequency.
@@ -44,7 +44,7 @@ int main(int argc, char* argv[]){
 
 
     double a_ho             = 1.5e-4;
-    double alpha            = 1.0/(2.0);    //*a_ho*a_ho);          // Variational parameter.
+    double alpha            = 0.7;    //*a_ho*a_ho);          // Variational parameter.
     double beta             = 2.82843;            // beta
     double interactionSize   =0.0043;            // trap size
     double stepLength       = 1.0;          // Metropolis step length.

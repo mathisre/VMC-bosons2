@@ -47,9 +47,9 @@ public:
     double getPsiOld() const;
     void setPsiOld(double psiOld);
 
-    std::vector<double> getQuantumForce() const;
-    void setQuantumForce(const std::vector<double> &QuantumForce);
-    void updateQuantumForce(std::vector<double> deltaQuantumForce, bool subtract);
+     std::vector<std::vector<double>> getQuantumForce() const;
+    void setQuantumForce(const  std::vector<std::vector<double>> &QuantumForce);
+    void updateQuantumForce( std::vector<std::vector<double>> deltaQuantumForce, bool subtract);
 
 private:
     int                             m_numberOfParticles = 0;
@@ -62,7 +62,7 @@ private:
     double                          m_timeStep = 0;
     double                          m_sqrtTimeStep = 0;
 
-    std::vector<double> m_QuantumForce;
+    std::vector<std::vector<double>> m_QuantumForce;
     class WaveFunction*             m_waveFunction = nullptr;
     class Hamiltonian*              m_hamiltonian = nullptr;
     class InitialState*             m_initialState = nullptr;

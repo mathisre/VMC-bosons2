@@ -20,39 +20,58 @@ bool System::metropolisStep() {
 
     vector <double> r_old=m_particles.at(randparticle).getPosition();
     vector <double> r_new(m_numberOfDimensions);
-
+    vector <vector<double>> QF_old(m_numberOfDimensions,vector<double>(m_numberOfParticles));
+vector <vector<double>> QF_new(m_numberOfDimensions,vector<double>(m_numberOfParticles));
+QF_old=m_QuantumForce;
 
     for(int d = 0; d < m_numberOfDimensions; d++){
 //        r_new[d] = r_old[d] + m_stepLength*(Random::nextDouble()-0.5);
-        r_new[d] = r_old[d] + m_QuantumForce[d]*m_timeStep +  m_sqrtTimeStep*(Random::nextDouble()-0.5);
+        r_new[d] = r_old[d] + m_QuantumForce[d][randparticle]*m_timeStep +  m_sqrtTimeStep*(Random::nextGaussian(0,1));
+   //cout<<r_new[d]<<endl;
     }
-    // Remove energy and quantum force from that single particle and add back when either accept or decline move
-    getSampler()->updateEnergy(-getHamiltonian()->LocalEnergySingleParticle(m_particles, randparticle));
-    updateQuantumForce(m_waveFunction->QuantumForceSingleParticle(m_particles, randparticle), true);
 
+
+    // Remove energy and quantum force from that single particle and add back when either accept or decline move
     m_particles.at(randparticle).setPosition(r_new);
-    bool bosonsTooClose = updateDistanceMatrix(m_particles, randparticle);
-    if ( bosonsTooClose == true){ // Then don't accept
-        m_particles.at(randparticle).setPosition(r_old);
-        updateDistanceMatrix(m_particles, randparticle);
+ //   getSampler()->updateEnergy(-getHamiltonian()->LocalEnergySingleParticle(m_particles, randparticle));
+    setQuantumForce(m_waveFunction->QuantumForce(m_particles));
+QF_new=m_QuantumForce;
+updateDistanceMatrix(m_particles, randparticle);
+//    bool bosonsTooClose = updateDistanceMatrix(m_particles, randparticle);
+//    if ( bosonsTooClose == true){ // Then don't accept
+//        m_particles.at(randparticle).setPosition(r_old);
+//        updateDistanceMatrix(m_particles, randparticle);
 //        cout << "hello bosons" << endl;
-        getSampler()->updateEnergy(getHamiltonian()->LocalEnergySingleParticle(m_particles, randparticle));
-        updateQuantumForce(m_waveFunction->QuantumForceSingleParticle(m_particles, randparticle), false);
-        return false;
+//        //getSampler()->updateEnergy(getHamiltonian()->LocalEnergySingleParticle(m_particles, randparticle));
+//       getSampler()->updateEnergy(getHamiltonian()->computeLocalEnergy(m_particles));
+//        // updateQuantumForce(m_waveFunction->QuantumForceSingleParticle(m_particles, randparticle), false);
+//        setQuantumForce(m_waveFunction->QuantumForce(m_particles));
+//        return false;
+//    }
+
+
+    double GreensFunction =0.0;
+
+    for(int d = 0; d < m_numberOfDimensions; d++){
+        for(int j=0; j<m_numberOfParticles; j++){
+            GreensFunction += 0.5*(QF_old[d][j]+QF_new[d][j])*(0.5*m_timeStep*0.5*(QF_old[d][j]+QF_new[d][j]-r_new[d]+r_old[d]));
+        }
     }
+    GreensFunction = exp(GreensFunction);
+
 
     double psi_new = m_waveFunction->evaluate(m_particles);
-    if (Random::nextDouble() <= psi_new * psi_new / (m_psiOld * m_psiOld)){ // Accept
+    if (Random::nextDouble() <= GreensFunction*psi_new * psi_new / (m_psiOld * m_psiOld)){ // Accept
         m_psiOld = psi_new;
-        getSampler()->updateEnergy(getHamiltonian()->LocalEnergySingleParticle(m_particles, randparticle));
-        updateQuantumForce(m_waveFunction->QuantumForceSingleParticle(m_particles, randparticle), false);
+   //    getSampler()->updateEnergy(getHamiltonian()->LocalEnergySingleParticle(m_particles, randparticle));
+        //updateQuantumForce(m_waveFunction->QuantumForceSingleParticle(m_particles, randparticle), false);
         return true;
     }
     else{ // Don't accept
         m_particles.at(randparticle).setPosition(r_old);
-        getSampler()->updateEnergy(getHamiltonian()->LocalEnergySingleParticle(m_particles, randparticle));
-
-        updateQuantumForce(m_waveFunction->QuantumForceSingleParticle(m_particles, randparticle), false);
+       // getSampler()->updateEnergy(getHamiltonian()->LocalEnergySingleParticle(m_particles, randparticle));
+    setQuantumForce(QF_old);
+    //    updateQuantumForce(m_waveFunction->QuantumForceSingleParticle(m_particles, randparticle), false);
         updateDistanceMatrix(m_particles, randparticle);
         return false;
     }
@@ -74,6 +93,7 @@ void System::runMetropolisSteps(int numberOfMetropolisSteps) {
     setQuantumForce(m_waveFunction->QuantumForce(m_particles));
     for (int i=0; i < numberOfMetropolisSteps; i++) {
         bool acceptedStep = metropolisStep();
+        //cout<<m_sampler->getEnergy()<<endl;
             m_sampler->sample(acceptedStep);
             m_sampler->writeToFile();
     }
@@ -153,15 +173,19 @@ std::vector<vector<double>> System::computematrixdistance(std::vector<class Part
     return distancematrix;
 }
 
-void System::updateQuantumForce(std::vector<double> deltaQuantumForce, bool subtract){
+void System::updateQuantumForce(std::vector<std::vector<double> > deltaQuantumForce, bool subtract){
     if (subtract == false){
         for (int d = 0; d < m_numberOfDimensions; d++){
-            m_QuantumForce[d] += deltaQuantumForce[d];
+        for(int i=0; i<=m_numberOfParticles; i++){
+            m_QuantumForce[d][i] += deltaQuantumForce[d][i];
+        }
         }
     }
     else {
         for (int d = 0; d < m_numberOfDimensions; d++){
-            m_QuantumForce[d] -= deltaQuantumForce[d];
+        for(int i=0; i<=m_numberOfParticles; i++){
+            m_QuantumForce[d][i] += deltaQuantumForce[d][i];
+        }
         }
     }
 }
@@ -232,12 +256,12 @@ void System::setPsiOld(double psiOld)
     m_psiOld = psiOld;
 }
 
-std::vector<double> System::getQuantumForce() const
+std::vector<vector<double>> System::getQuantumForce() const
 {
     return m_QuantumForce;
 }
 
-void System::setQuantumForce(const std::vector<double> &QuantumForce)
+void System::setQuantumForce(const std::vector<vector<double>> &QuantumForce)
 {
     m_QuantumForce = QuantumForce;
 }

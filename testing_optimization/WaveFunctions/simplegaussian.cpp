@@ -35,6 +35,7 @@ double SimpleGaussian::evaluate(std::vector<class Particle> &particles) {
 
         if(m_system->getNumberOfParticles()==1) break;
         for(int i=0; i<j; i++){
+            if(m_system->getDistanceMatrixij(i,j)<m_system->getinteractionSize()){f=0.0;cout<<"ehi"<<endl; break;}
             f *= 1-m_system->getinteractionSize()/(m_system->getDistanceMatrixij(i,j));
     }
 }
@@ -53,7 +54,74 @@ return exp(-r_squared)*f;
 
 double SimpleGaussian::computeDoubleDerivative(std::vector<class Particle>& particles) {
 
+    double alpha = m_system->getWaveFunction()->getParameters()[0];
+        double beta = m_system->getWaveFunction()->getParameters()[2]/m_system->getWaveFunction()->getParameters()[0];
+        double interactionRange =  m_system->getinteractionSize();
 
+        // compute the harmonic elliptic potential
+        double r2 = 0;
+        for (int i=0; i < m_system->getNumberOfParticles(); i++) {
+            for (int j=0; j < m_system->getNumberOfDimensions() - 1; j++) {
+              r2 += m_system->getParticles()[i].getPosition()[j]*m_system->getParticles()[i].getPosition()[j];
+            }
+            int j = m_system->getNumberOfDimensions() - 1;
+            r2 += m_system->getParticles()[i].getPosition()[j]*m_system->getParticles()[i].getPosition()[j] * beta*beta;
+        }
+//        potentialEnergy = r2*0.5;
+
+        // one body kinetic energy
+        double oneBodyLaplacian = r2 * 4.0 * alpha * alpha
+                                  - 2 * ((m_system->getNumberOfDimensions() - 1) * alpha + alpha * beta)
+                                  * m_system->getNumberOfParticles();
+
+        // interaction laplacian and cross term
+        double interactionLaplacian = 0;
+        for (int i=0; i < m_system->getNumberOfParticles(); i++) {
+            double r_i2 = 0;
+            for (int k=0; k < m_system->getNumberOfDimensions(); k++)
+                r_i2 += m_system->getParticles()[i].getPosition()[k]*
+                        m_system->getParticles()[i].getPosition()[k];
+
+            double sum1 = 0, sum2 = 0, sum3 = 0, sum4 = 0, temp;
+            for (int j=0; j < i; j++) {
+                double r_ij = m_system->getDistanceMatrixij(i,j);
+                temp = interactionRange / ((r_ij - interactionRange) * r_ij);
+                sum1 += temp;
+                sum2 += temp*temp;
+                sum3 += (interactionRange -2*r_ij)  * interactionRange /
+                        ( (r_ij - interactionRange) * (r_ij - interactionRange) * r_ij * r_ij);
+                double r_iDotr_j = 0;
+                for (int k=0; k < m_system->getNumberOfDimensions()-1; k++)
+                    r_iDotr_j += m_system->getParticles()[i].getPosition()[k]*m_system->getParticles()[j].getPosition()[k];
+                int k = m_system->getNumberOfDimensions()-1;
+                r_iDotr_j += beta*m_system->getParticles()[i].getPosition()[k]*m_system->getParticles()[j].getPosition()[k];
+                sum4 -= 4 * alpha * interactionRange * r_i2 * r_iDotr_j /
+                        ((r_ij - interactionRange) * r_ij * r_ij);
+            }
+            for (int j=i+1; j < m_system->getNumberOfParticles(); j++) {
+                double r_ij = m_system->getDistanceMatrixij(i,j);
+                temp = interactionRange / ((r_ij - interactionRange) * r_ij);
+                sum1 += temp;
+                sum3 += (interactionRange -2*r_ij) * interactionRange /
+                        ( (r_ij - interactionRange) * (r_ij - interactionRange) * r_ij * r_ij);
+                double r_iDotr_j = 0;
+                for (int k=0; k < m_system->getNumberOfDimensions() - 1; k++) {
+                    r_iDotr_j += m_system->getParticles()[i].getPosition()[k]*m_system->getParticles()[j].getPosition()[k];
+                }
+                int k = m_system->getNumberOfDimensions() - 1;
+                r_iDotr_j += beta * m_system->getParticles()[i].getPosition()[k]*m_system->getParticles()[j].getPosition()[k];
+                sum4 -= 4 * alpha * interactionRange * r_i2 * r_iDotr_j /
+                        ((r_ij - interactionRange) * r_ij * r_ij);
+            }
+
+            sum2 = sum1*sum1;
+            sum1 *= (m_system->getNumberOfDimensions()-1)/sqrt(r_i2);
+            interactionLaplacian += sum1 + sum2 + sum3 + sum4;
+        }
+
+    return -0.5 * (oneBodyLaplacian + interactionLaplacian);
+
+    /*
     double first = 0;
     double second = 0, third = 0, fourth=0;
     double a=m_system->getinteractionSize();
@@ -116,7 +184,7 @@ double SimpleGaussian::computeDoubleDerivative(std::vector<class Particle>& part
         i++;
     }
 
-*/
+
     vector <double> r_i(3);
     vector <double> r_j(3);
     double temp=0;
@@ -153,7 +221,7 @@ double SimpleGaussian::computeDoubleDerivative(std::vector<class Particle>& part
     return first-4*second+third-fourth;
 
 
-
+*/
 
 
 
@@ -195,7 +263,75 @@ double SimpleGaussian::computeDoubleDerivative(std::vector<class Particle>& part
 
 double SimpleGaussian::computeDoubleDerivativeSingleParticle(std::vector<class Particle>& particles, int singParticle) {
 
+    double alpha = m_system->getWaveFunction()->getParameters()[0];
+        double beta = m_system->getWaveFunction()->getParameters()[2]/m_system->getWaveFunction()->getParameters()[0];
+        double interactionRange =  m_system->getinteractionSize();
 
+        // compute the harmonic elliptic potential
+        double r2 = 0;
+        int i=singParticle;
+            for (int j=0; j < m_system->getNumberOfDimensions() - 1; j++) {
+              r2 += m_system->getParticles()[i].getPosition()[j]*m_system->getParticles()[i].getPosition()[j];
+            }
+            int j = m_system->getNumberOfDimensions() - 1;
+            r2 += m_system->getParticles()[i].getPosition()[j]*m_system->getParticles()[i].getPosition()[j] * beta*beta;
+
+//        potentialEnergy = r2*0.5;
+
+        // one body kinetic energy
+        double oneBodyLaplacian = r2 * 4.0 * alpha * alpha
+                                  - 2 * ((m_system->getNumberOfDimensions() - 1) * alpha + alpha * beta)
+                                  * m_system->getNumberOfParticles();
+
+        // interaction laplacian and cross term
+        double interactionLaplacian = 0;
+
+            double r_i2 = 0;
+            for (int k=0; k < m_system->getNumberOfDimensions(); k++)
+                r_i2 += m_system->getParticles()[i].getPosition()[k]*
+                        m_system->getParticles()[i].getPosition()[k];
+
+            double sum1 = 0, sum2 = 0, sum3 = 0, sum4 = 0, temp;
+            for (int j=0; j < i; j++) {
+                double r_ij = m_system->getDistanceMatrixij(i,j);
+                temp = interactionRange / ((r_ij - interactionRange) * r_ij);
+                sum1 += temp;
+                sum2 += temp*temp;
+                sum3 += (interactionRange -2*r_ij)  * interactionRange /
+                        ( (r_ij - interactionRange) * (r_ij - interactionRange) * r_ij * r_ij);
+                double r_iDotr_j = 0;
+                for (int k=0; k < m_system->getNumberOfDimensions()-1; k++)
+                    r_iDotr_j += m_system->getParticles()[i].getPosition()[k]*m_system->getParticles()[j].getPosition()[k];
+                int k = m_system->getNumberOfDimensions()-1;
+                r_iDotr_j += beta*m_system->getParticles()[i].getPosition()[k]*m_system->getParticles()[j].getPosition()[k];
+                sum4 -= 4 * alpha * interactionRange * r_i2 * r_iDotr_j /
+                        ((r_ij - interactionRange) * r_ij * r_ij);
+            }
+            for (int j=i+1; j < m_system->getNumberOfParticles(); j++) {
+                double r_ij = m_system->getDistanceMatrixij(i,j);
+                temp = interactionRange / ((r_ij - interactionRange) * r_ij);
+                sum1 += temp;
+                sum3 += (interactionRange -2*r_ij) * interactionRange /
+                        ( (r_ij - interactionRange) * (r_ij - interactionRange) * r_ij * r_ij);
+                double r_iDotr_j = 0;
+                for (int k=0; k < m_system->getNumberOfDimensions() - 1; k++) {
+                    r_iDotr_j += m_system->getParticles()[i].getPosition()[k]*m_system->getParticles()[j].getPosition()[k];
+                }
+                int k = m_system->getNumberOfDimensions() - 1;
+                r_iDotr_j += beta * m_system->getParticles()[i].getPosition()[k]*m_system->getParticles()[j].getPosition()[k];
+                sum4 -= 4 * alpha * interactionRange * r_i2 * r_iDotr_j /
+                        ((r_ij - interactionRange) * r_ij * r_ij);
+            }
+
+            sum2 = sum1*sum1;
+            sum1 *= (m_system->getNumberOfDimensions()-1)/sqrt(r_i2);
+            interactionLaplacian += sum1 + sum2 + sum3 + sum4;
+
+
+    return -0.5 * (oneBodyLaplacian + interactionLaplacian);
+
+
+    /*
     double first = 0;
     double second = 0, third = 0, fourth=0;
     double a = m_system->getinteractionSize();
@@ -279,13 +415,13 @@ double SimpleGaussian::computeDoubleDerivativeSingleParticle(std::vector<class P
 
     fourth=temp3*temp3;
 
-//    cout<<first<<"first"<<endl;
-//    cout<<second<<"second"<<endl;
-//    cout<<third<<"third"<<endl;
-//    cout<<fourth<<"fourth"<<endl;
+    cout<<first<<"first"<<endl;
+    cout<<second<<"second"<<endl;
+    cout<<third<<"third"<<endl;
+    cout<<fourth<<"fourth"<<endl;
 
     return first-4*second+third-fourth;
-
+*/
 //    int k = singParticle;
 //    double R_kj, R_ki;
 //        for(int j=0; j<m_system->getNumberOfParticles(); j++){
@@ -320,58 +456,76 @@ double SimpleGaussian::computeDoubleDerivativeSingleParticle(std::vector<class P
 
 
 
-std::vector<double> SimpleGaussian::QuantumForce(std::vector<class Particle>& particles) {
+std::vector<vector<double>> SimpleGaussian::QuantumForce(std::vector<class Particle>& particles) {
+//    // CREATE THE MATRIX
+//    m_quantumForce.resize(m_system->getNumberOfDimensions());
+//    for(int i = 0; i < m_system->getNumberOfDimensions(); i++)
+//        m_quantumForce[i].resize(2*m_system->getNumberOfParticles());
 
-    double a = 0;
+//    // ASSIGN THE VALUES
+//    double a = m_parameters[2];
+//    for(int i = 0; i < m_system->getNumberOfDimensions(); i++)
+//        for(int j = 0; j < m_system->getNumberOfParticles(); j++){
+//            m_quantumForce[i][j] = -2*particles[j]->getPosition()[i]*m_parameters[0];
+//            for(int k = 0; k < j; k++){
+//                double rjk= m_system->getDistance()[j][k];
+//                m_quantumForce[i][j]+= a* (particles[j]->getPosition()[i]-particles[k]->getPosition()[i])/((rjk-a)*rjk*rjk);
+//            }
+//            for(int k = j+1; k < m_system->getNumberOfParticles(); k++){
+//                double rjk= m_system->getDistance()[k][j];
+//                m_quantumForce[i][j]+= a*(particles[j]->getPosition()[i]-particles[k]->getPosition()[i])/((rjk-a)*rjk*rjk);
+//            }
+//            m_quantumForce[i][j]*=2;
+//        }
+
+
+
+    double a = m_system->getinteractionSize() ;
     double constant;
     double R_kj;
-
-    std::vector<double> QuantumForce(3);
+    double dimension=m_system->getNumberOfDimensions();
+    double number =m_system->getNumberOfParticles();
+    std::vector<std::vector<double>> QuantumForce(dimension,vector<double>(number));
     std::vector<double> u_deriv(3);
-    for (int k = 0; k < m_system->getNumberOfParticles(); k++){
-
+    for (int d = 0; d < m_system->getNumberOfDimensions(); d++){
+        for (int k = 0; k < m_system->getNumberOfParticles(); k++){
+    QuantumForce[d][k] = -2 * (m_parameters[d]*particles.at(k).getPosition()[d]);
         for (int j = 0; j < k; j++){
                 R_kj = m_system->getDistanceMatrixij(k,j);
                 constant = 2*a / (R_kj*R_kj*(R_kj-a));
-                for (int d = 0; d < m_system->getNumberOfDimensions(); d++){
-                    u_deriv[d] += (particles.at(k).getPosition()[d] - particles.at(j).getPosition()[d]) * constant;
-                }
+
+                    QuantumForce[d][k] += (particles.at(k).getPosition()[d] - particles.at(j).getPosition()[d]) * constant;
+
             }
-
-        for (int d = 0; d < m_system->getNumberOfDimensions(); d++){
-            QuantumForce[d] += -2 * (m_parameters[d]*particles.at(k).getPosition()[d])
-                               + u_deriv[d];
-
         }
     }
     return QuantumForce;
 }
 
 
-std::vector<double> SimpleGaussian::QuantumForceSingleParticle(std::vector<class Particle>& particles, int singParticle) {
+std::vector<vector<double>> SimpleGaussian::QuantumForceSingleParticle(std::vector<class Particle>& particles, int singParticle) {
 
     double a = m_system->getinteractionSize();
     double R_kj;
     double constant;
 
-    std::vector<double> QuantumForce(3);
-    std::vector<double> u_deriv(3);
-    for (int j = 0; j < singParticle; j++){
-        R_kj = m_system->getDistanceMatrixij(singParticle,j);
-        constant = a / (R_kj*R_kj*(R_kj-a));
-        for (int d = 0; d < m_system->getNumberOfDimensions(); d++){
-            u_deriv[d] += (particles.at(singParticle).getPosition()[d] - particles.at(j).getPosition()[d]) * constant;
-        }
-    }
-
+    double dimension=m_system->getNumberOfDimensions();
+    double number =m_system->getNumberOfParticles();
+    std::vector<std::vector<double>> QuantumForce(dimension,vector<double>(number));
+    //std::vector<double> u_deriv(3);
+    int k=singParticle;
     for (int d = 0; d < m_system->getNumberOfDimensions(); d++){
-        QuantumForce[d] += -2 * (m_parameters[d]*particles.at(singParticle).getPosition()[d])
-                               + u_deriv[d];
+
+    QuantumForce[d][k] = -2 * (m_parameters[d]*particles.at(k).getPosition()[d]);
+        for (int j = 0; j < k; j++){
+                R_kj = m_system->getDistanceMatrixij(k,j);
+                constant = 2*a / (R_kj*R_kj*(R_kj-a));
+
+                    QuantumForce[d][k] += (particles.at(k).getPosition()[d] - particles.at(j).getPosition()[d]) * constant;
+
+            }
+
     }
-
-
-
-
     return QuantumForce;
 
 }

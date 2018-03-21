@@ -31,6 +31,7 @@ void Sampler::sample(bool acceptedStep) {
         m_cumulativeWFderivMultEloc = 0;
     }
     if (acceptedStep==true){
+        m_energy=m_system->getHamiltonian()->computeLocalEnergy(m_system->getParticles());
         // Sampling of energy moved to metropolisstep
         m_acceptedNumber++;
         m_WFderiv = 0;
@@ -80,7 +81,7 @@ void Sampler::printOutputToTerminal() {
     cout << "  -- Results -- " << endl;
     cout << " Energy : " << m_energy << endl;
     cout << " St. dev: " << sqrt(m_cumulativeEnergySquared - m_energy*m_energy) << endl;
-    cout << " Number of accepted steps: " << m_acceptedNumber << endl;
+    cout << " Number of accepted steps: " << m_acceptedNumber/m_stepNumber << endl;
     cout << endl;
 }
 
