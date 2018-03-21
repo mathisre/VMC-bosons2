@@ -50,8 +50,7 @@ OBJECTS_DIR   = ./
 
 ####### Files
 
-SOURCES       = main.cpp \
-		system.cpp \
+SOURCES       = system.cpp \
 		Hamiltonians/hamiltonian.cpp \
 		Hamiltonians/harmonicoscillator.cpp \
 		particle.cpp \
@@ -61,9 +60,8 @@ SOURCES       = main.cpp \
 		Math/random.cpp \
 		sampler.cpp \
 		WaveFunctions/simplegaussian.cpp \
-		conjugategradient.cpp 
-OBJECTS       = main.o \
-		system.o \
+		main.cpp 
+OBJECTS       = system.o \
 		hamiltonian.o \
 		harmonicoscillator.o \
 		particle.o \
@@ -73,7 +71,7 @@ OBJECTS       = main.o \
 		random.o \
 		sampler.o \
 		simplegaussian.o \
-		conjugategradient.o
+		main.o
 DIST          = ../../Qt/5.10.1/gcc_64/mkspecs/features/spec_pre.prf \
 		../../Qt/5.10.1/gcc_64/mkspecs/common/unix.conf \
 		../../Qt/5.10.1/gcc_64/mkspecs/common/linux.conf \
@@ -260,8 +258,7 @@ DIST          = ../../Qt/5.10.1/gcc_64/mkspecs/features/spec_pre.prf \
 		Math/random.h \
 		sampler.h \
 		WaveFunctions/simplegaussian.h \
-		conjugategradient.h main.cpp \
-		system.cpp \
+		conjugategradient.h system.cpp \
 		Hamiltonians/hamiltonian.cpp \
 		Hamiltonians/harmonicoscillator.cpp \
 		particle.cpp \
@@ -271,7 +268,7 @@ DIST          = ../../Qt/5.10.1/gcc_64/mkspecs/features/spec_pre.prf \
 		Math/random.cpp \
 		sampler.cpp \
 		WaveFunctions/simplegaussian.cpp \
-		conjugategradient.cpp
+		main.cpp
 QMAKE_TARGET  = testing-opt
 DESTDIR       = 
 TARGET        = testing-opt
@@ -681,26 +678,13 @@ compiler_clean:
 
 ####### Compile
 
-main.o: main.cpp system.h \
-		particle.h \
-		WaveFunctions/wavefunction.h \
-		WaveFunctions/simplegaussian.h \
-		Hamiltonians/hamiltonian.h \
-		Hamiltonians/harmonicoscillator.h \
-		InitialStates/initialstate.h \
-		InitialStates/randomuniform.h \
-		Math/random.h \
-		conjugategradient.h
-	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o main.o main.cpp
-
 system.o: system.cpp system.h \
 		sampler.h \
 		particle.h \
 		WaveFunctions/wavefunction.h \
 		Hamiltonians/hamiltonian.h \
 		InitialStates/initialstate.h \
-		Math/random.h \
-		conjugategradient.h
+		Math/random.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o system.o system.cpp
 
 hamiltonian.o: Hamiltonians/hamiltonian.cpp Hamiltonians/hamiltonian.h \
@@ -750,15 +734,17 @@ simplegaussian.o: WaveFunctions/simplegaussian.cpp WaveFunctions/simplegaussian.
 		particle.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o simplegaussian.o WaveFunctions/simplegaussian.cpp
 
-conjugategradient.o: conjugategradient.cpp conjugategradient.h \
+main.o: main.cpp system.h \
+		particle.h \
 		WaveFunctions/wavefunction.h \
 		WaveFunctions/simplegaussian.h \
-		Hamiltonians/harmonicoscillator.h \
 		Hamiltonians/hamiltonian.h \
-		system.h \
-		particle.h \
-		sampler.h
-	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o conjugategradient.o conjugategradient.cpp
+		Hamiltonians/harmonicoscillator.h \
+		InitialStates/initialstate.h \
+		InitialStates/randomuniform.h \
+		Math/random.h \
+		conjugategradient.h
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o main.o main.cpp
 
 ####### Install
 

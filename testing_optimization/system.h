@@ -47,6 +47,8 @@ public:
     double getPsiOld() const;
     void setPsiOld(double psiOld);
 
+    double findEnergyDerivative(double CJsteps);
+
      std::vector<std::vector<double>> getQuantumForce() const;
     void setQuantumForce(const  std::vector<std::vector<double>> &QuantumForce);
     void updateQuantumForce( std::vector<std::vector<double>> deltaQuantumForce, bool subtract);

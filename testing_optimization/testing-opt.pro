@@ -3,7 +3,7 @@ CONFIG  += console c++11
 CONFIG  -= app_bundle
 CONFIG  -= qt
 
-SOURCES += main.cpp \
+SOURCES += \
     system.cpp \
     Hamiltonians/hamiltonian.cpp \
     Hamiltonians/harmonicoscillator.cpp \
@@ -14,7 +14,7 @@ SOURCES += main.cpp \
     Math/random.cpp \
     sampler.cpp \
     WaveFunctions/simplegaussian.cpp \
-    conjugategradient.cpp
+    main.cpp
 
 HEADERS += \
     system.h \
@@ -28,4 +28,5 @@ HEADERS += \
     sampler.h \
     WaveFunctions/simplegaussian.h \
     conjugategradient.h
+
 

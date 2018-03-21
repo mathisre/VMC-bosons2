@@ -67,7 +67,7 @@ double SimpleGaussian::computeDoubleDerivative(std::vector<class Particle>& part
          }
          int d = m_system->getNumberOfDimensions()-1;
          r_i_square += particles.at(i).getPosition()[d]*
-                       particles.at(i).getPosition()[d]*m_parameters[2]/(m_parameters[0]*m_parameters[0]);
+                       particles.at(i).getPosition()[d]*m_parameters[2]/(m_parameters[0]);
 
        double second=0;
        double third=0;
@@ -91,7 +91,7 @@ double SimpleGaussian::computeDoubleDerivative(std::vector<class Particle>& part
            int d = m_system->getNumberOfDimensions() - 1;
                r_ir_j += particles.at(i).getPosition()[d]*
                          particles.at(j).getPosition()[d]*
-                         m_parameters[2]/(m_parameters[0]*m_parameters[0]);
+                         m_parameters[2]/(m_parameters[0]);
 
            fourth-= temp * temp;
 
@@ -115,7 +115,7 @@ double SimpleGaussian::computeDoubleDerivative(std::vector<class Particle>& part
            int d = m_system->getNumberOfDimensions() - 1;
                r_ir_j += particles.at(i).getPosition()[d]*
                          particles.at(j).getPosition()[d]*
-                         m_parameters[2]/(m_parameters[0]*m_parameters[0]);
+                         m_parameters[2]/(m_parameters[0]);
 
            fourth-= temp * temp;
 

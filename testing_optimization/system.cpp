@@ -11,7 +11,7 @@
 #include <iostream>
 #include <fstream>
 #include <time.h>
-#include "conjugategradient.h"
+#//include "conjugategradient.h"
 
 using namespace std;
 
@@ -101,9 +101,9 @@ void System::runMetropolisSteps(int numberOfMetropolisSteps) {
 
 }
 
-void System::runConjugateGradient(){
-    m_conjugateGradient->conjugateGradientSteps();
-}
+//void System::runConjugateGradient(){
+//    m_conjugateGradient->conjugateGradientSteps();
+//}
 
 void System::printOut()
 {
@@ -303,10 +303,26 @@ void System::setInitialState(InitialState* initialState) {
 }
 
 
-void System::setConjugateGradient(conjugateGradient* conjugateGradient)
+//void System::setConjugateGradient(conjugateGradient* conjugateGradient)
+//{
+//    m_conjugateGradient = conjugateGradient;
+//}
+
+double System::findEnergyDerivative(double CJsteps)
 {
-    m_conjugateGradient = conjugateGradient;
+
+    double meanEnergy      = getSampler()->getEnergy() / CJsteps;
+    double meanWFderiv     = getSampler()->getWFderiv() / CJsteps;
+    double meanWFderivEloc = getSampler()->getWFderivMultELoc() / CJsteps;
+
+
+
+
+    // Make the sampler sample the wavefunc deriv and things like that
+    // Then just find the mean and we are good
+//cout<<meanWFderivEloc<<"meanwfderiveloc"<<endl;
+//cout<<-meanEnergy*meanWFderiv<<"other"<<endl;
+//if(2 * (meanWFderivEloc - meanEnergy*meanWFderiv)<0) return -2 * (meanWFderivEloc - meanEnergy*meanWFderiv);
+ return 2 * (meanWFderivEloc - meanEnergy*meanWFderiv);
 }
-
-
 

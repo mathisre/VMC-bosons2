@@ -39,17 +39,17 @@ static double maxarg1,maxarg2;
 //  this function defines the Energy function
 void dE_function(Vector  &x,double &fp, Vector &g)
 {
-    int numberOfParticles   = 1;
-    int numberOfDimensions  = 1;
+    int numberOfParticles   = 10;
+    int numberOfDimensions  = 3;
     int numberOfSteps       = (int) 1e5;
     double omega            = 1.0;          // Oscillator frequency.
-    double omega_z          = 1.0;          // Oscillator frequency z-direction
+    double omega_z          = 1.0;//2.82843;          // Oscillator frequency z-direction
     double timeStep         = 0.001;        // Importance sampling time step
 
     double a_ho             = 1-2e-4;
    // double alpha            = 1.0/(2.0);    //*a_ho*a_ho);          // Variational parameter.
-    double beta             = 1;            // beta
-    double trapSize         = 0;            // trap size
+    double beta             = 1.0;//2.82843;            // beta
+    double trapSize         = 0.0;//0.0043;            // trap size
     double stepLength       = 1.0;          // Metropolis step length.
     double equilibration    = 0.9;          // Amount of the total steps used for equilibration.
 
