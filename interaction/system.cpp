@@ -70,11 +70,8 @@ bool System::metropolisStepImportance() {
     double GreensFunction =0.0;
     for(int d = 0; d < m_numberOfDimensions; d++){
         int j = randparticle;
-
         GreensFunction += 0.5*(QF_old[d][j ] + QF_new[d][j])
                 *(0.5 * 0.5 * m_timeStep * (QF_old[d][j] - QF_new[d][j]) - r_new[d] + r_old[d]);
-
-
         }
 
     GreensFunction = exp(GreensFunction);
@@ -109,19 +106,17 @@ void System::runMetropolisSteps(int numberOfMetropolisSteps) {
     setDistanceMatrix(computematrixdistance(m_particles));
     m_psiOld = m_waveFunction->evaluate(m_particles);
     getSampler()->setEnergy(getHamiltonian()->computeLocalEnergy(m_particles));
-    cout<<getSampler()->getEnergy()<<endl;
     setQuantumForce(m_waveFunction->QuantumForce(m_particles));
 
     setHistogram();
 
     for (int i=0; i < numberOfMetropolisSteps; i++) {
-        bool acceptedStep = metropolisStepBruteForce();
-//        bool acceptedStep = metropolisStepImportance();
+//        bool acceptedStep = metropolisStepBruteForce();
+        bool acceptedStep = metropolisStepImportance();
         //cout<<m_sampler->getEnergy()<<endl;
             m_sampler->sample(acceptedStep);
             m_sampler->writeToFile();
 
-//            oneBodyDensity();
     }
 
 }
@@ -130,43 +125,87 @@ void System::runMetropolisSteps(int numberOfMetropolisSteps) {
 
 
 void System::oneBodyDensity(){
-
-
     vector<int> histogram(m_bins);
-    vector<double> r(getNumberOfParticles());
+    double r2 = 0;
     for (int j = 0; j < getNumberOfParticles(); j++){
+        r2 = 0;
         for (int d = 0; d < getNumberOfDimensions(); d++){
-            r[j] += m_particles.at(j).getPosition()[d]*m_particles.at(j).getPosition()[d];
+            r2 += m_particles.at(j).getPosition()[d]*m_particles.at(j).getPosition()[d];
         }
-
-        r[j] = sqrt(r[j]);
-        int bucket = (int)floor(r[j] / m_bucketSize);
-
+        r2 = sqrt(r2);
+        int bucket = (int)floor(r2 / m_bucketSize);
         histogram[bucket] += 1;
-
-
     }
 
     // Update histogram
     for (int k = 0; k < m_bins; k++){
        m_histogram[k] += histogram[k];
     }
-
 }
 
-void System::printOneBodyDensity(){
+void System::printOneBodyDensity(string filename){
     ofstream myFile;
-    string filename = "ob_density.dat";
     myFile.open(filename);
     for (int j = 0; j < m_bins; j++){
-        myFile <<(double) m_histogram[j] /(getNumberOfParticles()*getNumberOfMetropolisSteps()) << "    " << j*m_bucketSize<< endl;
+        myFile <<(double) m_histogram[j] /(getNumberOfParticles()*getNumberOfMetropolisSteps()*getEquilibrationFraction()*m_bucketSize) << "    " << j*m_bucketSize<< endl;
     }
+    cout << "Printed ob density! " << endl;
 }
 void System::setHistogram()
 {
     vector<int> histogram(getBins());
     m_histogram = histogram;
 }
+
+double System::gradientDescent(double initialAlpha, string filename, int maxIterations){
+
+    int steepestDescentSteps = (int) 1e+5;
+    double alpha = initialAlpha;
+    double beta = getWaveFunction()->getParameters()[2] / getWaveFunction()->getParameters()[0];
+    double lambda = -0.001;
+    int iterations = 0;
+    double energyDerivative = 100;
+    double cumulativeAlpha = 0;
+    double tol = 1e-10;
+    double percentAlphasToSave = 0.3;
+    ofstream myFile;
+    myFile.open(filename);
+
+    while (iterations < maxIterations && fabs(energyDerivative) > tol){
+        vector<double> parameters(3);
+        parameters[0] = alpha;
+        parameters[1] = alpha;
+        parameters[2] = alpha*beta;
+        getWaveFunction()->setParameters(parameters);
+        runMetropolisSteps(steepestDescentSteps);
+        printOut();
+        energyDerivative = findEnergyDerivative();
+
+        // Make sure we accept enough moves (with interaction can get stuck)
+        if ((double)m_sampler->getAcceptedNumber() / steepestDescentSteps > 0.90){
+            alpha += lambda*energyDerivative;
+            iterations++;
+        }
+
+        cout << " New alpha = "  << alpha <<  endl;
+        cout << " Energy derivative = " << energyDerivative << endl;
+        cout << " Iterations = " << iterations << endl;
+
+        // Write alpha, mean local energy and st dev to file
+        myFile << alpha << "   "  << getSampler()->getEnergy() << "  " <<
+                  sqrt(getSampler()->getCumulativeEnergySquared() - getSampler()->getEnergy()*getSampler()->getEnergy()) << endl;
+
+        if ((double) iterations / maxIterations > 1-percentAlphasToSave){
+            cumulativeAlpha += alpha;
+        }
+    }
+    myFile.close();
+
+    alpha = cumulativeAlpha / (maxIterations*percentAlphasToSave);
+    return alpha;
+}
+
+
 int System::getBins() const
 {
     return m_bins;
@@ -385,26 +424,16 @@ void System::setInitialState(InitialState* initialState) {
 }
 
 
-//void System::setConjugateGradient(conjugateGradient* conjugateGradient)
-//{
-//    m_conjugateGradient = conjugateGradient;
-//}
-
-double System::findEnergyDerivative(double CJsteps)
+double System::findEnergyDerivative()
 {
 
-    double meanEnergy      = getSampler()->getEnergy() / CJsteps;
-    double meanWFderiv     = getSampler()->getWFderiv() / CJsteps;
-    double meanWFderivEloc = getSampler()->getWFderivMultELoc() / CJsteps;
+    double meanEnergy      = getSampler()->getCumulativeEnergy() / (m_numberOfMetropolisSteps*getEquilibrationFraction());
+    double meanWFderiv     = getSampler()->getCumulativeWFderiv() / (m_numberOfMetropolisSteps*getEquilibrationFraction());
+    double meanWFderivEloc =  getSampler()->getCumulativeWFderivMultEloc() / (m_numberOfMetropolisSteps*getEquilibrationFraction());
 
 
 
 
-    // Make the sampler sample the wavefunc deriv and things like that
-    // Then just find the mean and we are good
-//cout<<meanWFderivEloc<<"meanwfderiveloc"<<endl;
-//cout<<-meanEnergy*meanWFderiv<<"other"<<endl;
-//if(2 * (meanWFderivEloc - meanEnergy*meanWFderiv)<0) return -2 * (meanWFderivEloc - meanEnergy*meanWFderiv);
- return 2 * (meanWFderivEloc - meanEnergy*meanWFderiv);
+    return 2 * (meanWFderivEloc - meanEnergy*meanWFderiv);
 }
 

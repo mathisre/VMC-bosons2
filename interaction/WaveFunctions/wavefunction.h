@@ -13,6 +13,8 @@ public:
     virtual std::vector<std::vector<double>> QuantumForce(std::vector<class Particle>& particles) = 0;
     virtual std::vector<std::vector<double>> QuantumForceSingleParticle(std::vector<class Particle>& particles, int singParticle) = 0;
 
+    void setParameters(const std::vector<double> &parameters);
+
 protected:
     int     m_numberOfParameters = 0;
     std::vector<double> m_parameters = std::vector<double>();

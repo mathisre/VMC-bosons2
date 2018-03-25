@@ -35,11 +35,13 @@ void Sampler::sample(bool acceptedStep) {
         // Sampling of energy moved to metropolisstep
         m_acceptedNumber++;
         m_WFderiv = 0;
+        double beta = m_system->getWaveFunction()->getParameters()[2] / m_system->getWaveFunction()->getParameters()[0];;
         for (int i = 0; i < m_system->getNumberOfParticles(); i++){
-            for (int d = 0; d < m_system->getNumberOfDimensions(); d++){
+            for (int d = 0; d < m_system->getNumberOfDimensions() - 1; d++){
                 m_WFderiv -= m_system->getParticles().at(i).getPosition()[d] * m_system->getParticles().at(i).getPosition()[d];
-                //Remember to include (1,1,beta) vector
-            }
+            }            
+            int d = m_system->getNumberOfDimensions() - 1;
+            m_WFderiv -= m_system->getParticles().at(i).getPosition()[d] * m_system->getParticles().at(i).getPosition()[d] * beta;
         }
         m_WFderivMultELoc = m_WFderiv * m_energy;
     }
@@ -51,6 +53,9 @@ void Sampler::sample(bool acceptedStep) {
         m_cumulativeEnergySquared   += m_energy*m_energy;
         m_cumulativeWFderiv         += m_WFderiv;
         m_cumulativeWFderivMultEloc += m_WFderivMultELoc;
+
+        // Sometimes crashes
+//        m_system->oneBodyDensity();
 }
     //cout<<m_cumulativeEnergy<<endl;
     m_stepNumber++;
@@ -192,4 +197,14 @@ void Sampler::updateEnergy(double dE){
 double Sampler::getCumulativeEnergy() const
 {
     return m_cumulativeEnergy;
+}
+
+double Sampler::getCumulativeEnergySquared() const
+{
+    return m_cumulativeEnergySquared;
+}
+
+void Sampler::setCumulativeEnergySquared(double cumulativeEnergySquared)
+{
+    m_cumulativeEnergySquared = cumulativeEnergySquared;
 }

@@ -41,6 +41,9 @@ public:
     void updateEnergy(double dE);
     double getCumulativeEnergy() const;
 
+    double getCumulativeEnergySquared() const;
+    void setCumulativeEnergySquared(double cumulativeEnergySquared);
+
 private:
     int     m_numberOfMetropolisSteps  = 0;
     double     m_stepNumber               = 0;

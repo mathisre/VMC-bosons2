@@ -60,6 +60,7 @@ double HarmonicOscillator::LocalEnergySingleParticle(std::vector<Particle> &part
     for (int d = 0; d < m_system->getNumberOfDimensions(); d++){
         potentialEnergy += m_omega[d]*m_omega[d]*particles.at(singParticle).getPosition()[d]*particles.at(singParticle).getPosition()[d];
 
+
     }
 
 
@@ -70,5 +71,14 @@ double HarmonicOscillator::LocalEnergySingleParticle(std::vector<Particle> &part
 }
 
 
+std::vector<double> HarmonicOscillator::omega() const
+{
+    return m_omega;
+}
+
+void HarmonicOscillator::setOmega(const std::vector<double> &omega)
+{
+    m_omega = omega;
+}
 
 

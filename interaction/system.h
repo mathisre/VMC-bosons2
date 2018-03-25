@@ -15,8 +15,6 @@ public:
     void setHamiltonian             (class Hamiltonian* hamiltonian);
     void setWaveFunction            (class WaveFunction* waveFunction);
     void setInitialState            (class InitialState* initialState);
-    void setConjugateGradient       (class conjugateGradient* conjugateGradient);
-    void runConjugateGradient       ();
     void openDataFile               (std::string filename);
     void printOut                   ();
     double computedistance          (int i);
@@ -30,6 +28,8 @@ public:
     int getNumberOfDimensions()         { return m_numberOfDimensions; }
     int getNumberOfMetropolisSteps()    { return m_numberOfMetropolisSteps; }
     double getEquilibrationFraction()   { return m_equilibrationFraction; }
+
+    double gradientDescent(double initialAlpha, std::string filename, int maxIterations);
 
     double getinteractionSize() const;
     void setinteractionSize(double interactionSize);
@@ -48,7 +48,7 @@ public:
     double getPsiOld() const;
     void setPsiOld(double psiOld);
 
-    double findEnergyDerivative(double CJsteps);
+    double findEnergyDerivative();
 
      std::vector<std::vector<double>> getQuantumForce() const;
     void setQuantumForce(const  std::vector<std::vector<double>> &QuantumForce);
@@ -58,7 +58,7 @@ public:
     std::vector<int> getHistogram() const;
     void setHistogram();
 
-    void printOneBodyDensity();
+    void printOneBodyDensity(std::string filename);
 
     int getBins() const;
     void setBins(int bins);
@@ -66,6 +66,7 @@ public:
     double getBucketSize() const;
     void setBucketSize(double bucketSize);
         void oneBodyDensity();
+
 
 private:
     int                             m_numberOfParticles = 0;
@@ -77,9 +78,9 @@ private:
     double                          m_interactionSize = 0;
     double                          m_timeStep = 0;
     double                          m_sqrtTimeStep = 0;
-    int m_bins = 0;
-    double m_bucketSize = 0;
-    std::vector<int> m_histogram;
+    int                             m_bins = 0;
+    double                          m_bucketSize = 0;
+    std::vector<int>                m_histogram;
     std::vector<std::vector<double>> m_QuantumForce;
     class WaveFunction*             m_waveFunction = nullptr;
     class Hamiltonian*              m_hamiltonian = nullptr;
